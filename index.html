@@ -269,6 +269,16 @@
   .stamp.low{ color:var(--teal); border-color:var(--teal); background:var(--teal-soft); }
   .stamp.high{ color:var(--red); border-color:var(--red); background:var(--red-soft); }
 
+  .challenge{
+    margin:0 0 22px 52px; max-width:680px;
+    padding:14px 18px;
+    border-left:3px solid var(--red);
+    background:var(--red-soft);
+    border-radius:0 6px 6px 0;
+    font-size:14.5px; color:var(--ink-soft);
+  }
+  .challenge b{ color:var(--ink); }
+
   .datastrip{ margin-left:52px; }
   .datastrip .field-label{ margin-bottom:8px; }
   .tags{ display:flex; flex-wrap:wrap; gap:8px; }
@@ -339,7 +349,7 @@
     .rail{ position:static; margin-bottom:8px; }
     .rail nav{ flex-direction:row; overflow-x:auto; gap:14px; padding-bottom:10px; }
     .navlink{ padding-left:0; border-left:none; flex:none; }
-    .card-gap, .card-body, .stamps, .datastrip, .pipeline, .mvp-scroll{ margin-left:0; }
+    .card-gap, .card-body, .stamps, .datastrip, .pipeline, .mvp-scroll, .challenge{ margin-left:0; }
     .card-head{ gap:12px; }
   }
 </style>
@@ -371,7 +381,7 @@
     <div class="exec-panel">
       <p class="eyebrow">Executive summary &middot; read this first</p>
       <h2 class="exec-title">Two of these are buildable now. Four are waiting on something else.</h2>
-      <p class="exec-lede">Switzerland has strong open data on housing, elderly care, transit, energy and heat &mdash; almost none of it has been turned into a citizen- or planner-facing tool. Of the six systems assessed below, two need no new dataset, no new law and no new partnership: just integration work. The other four are blocked on dataset maturity, a health-sector partnership, or labor-market complexity outside what a small team controls.</p>
+      <p class="exec-lede">Switzerland has strong open data on housing, elderly care, transit, energy and heat &mdash; almost none of it has been turned into a citizen- or planner-facing tool. Of the six systems assessed below, two are the fastest realistic starting points &mdash; one needs a data-access request more than a new law, the other needs a genuine product answer to proactive nudging rather than new data. The other four are blocked on dataset maturity, a health-sector partnership, or labor-market complexity outside what a small team controls.</p>
 
       <div class="exec-stats">
         <div class="exec-stat"><span class="num mono">6</span><span class="label">Systems assessed</span></div>
@@ -384,8 +394,8 @@
         <table class="exec-table">
           <thead><tr><th>#</th><th>System</th><th>Domain</th><th>What's blocking it</th><th>Status</th></tr></thead>
           <tbody>
-            <tr><td>01</td><td>Permit Bottleneck Tracker</td><td>Housing</td><td>Nothing &mdash; integration only</td><td><span class="chip now">Build first</span></td></tr>
-            <tr><td>05</td><td>Off-Peak Transit Advisor</td><td>Transport</td><td>Nothing &mdash; product gap only</td><td><span class="chip now">Build first</span></td></tr>
+            <tr><td>01</td><td>Permit Bottleneck Tracker</td><td>Housing</td><td>Parcel-based matching + GWR access request</td><td><span class="chip now">Build first</span></td></tr>
+            <tr><td>05</td><td>Off-Peak Transit Advisor</td><td>Transport</td><td>Nudging/growth problem, not data</td><td><span class="chip now">Build first</span></td></tr>
             <tr><td>03</td><td>Grid Flexibility Signal</td><td>Energy</td><td>Dataset only months old</td><td><span class="chip later">Wait on data maturity</span></td></tr>
             <tr><td>04</td><td>Heat Vulnerability Warning</td><td>Climate</td><td>Needs a health-sector partner</td><td><span class="chip later">Wait on partnership</span></td></tr>
             <tr><td>02</td><td>Nursing Capacity Matching</td><td>Elderly care</td><td>Labor-market &amp; regulatory</td><td><span class="chip later">Hardest &mdash; high constraint</span></td></tr>
@@ -394,7 +404,7 @@
         </table>
       </div>
 
-      <p class="exec-callout"><b>Bottom line:</b> start with 01 and 05 &mdash; both ship in roughly a month on existing open data, with no regulatory unlock needed. The rest are worth revisiting once those two prove the model.</p>
+      <p class="exec-callout"><b>Bottom line:</b> start with 01 and 05 &mdash; both still ship fastest on existing open data, but neither is friction-free. 01 needs a parallel-track authorization request for near-real-time GWR access; 05's real challenge is building a proactive nudge people act on, not the crowding data itself. Still the right place to start &mdash; everything else waits on harder unlocks.</p>
     </div>
   </section>
 
@@ -421,6 +431,7 @@
           <div class="field"><div class="field-label">What it'd do</div><p>Aggregate cantonal permit-portal data with GWR building starts, STATPOP growth and the Empty Dwellings Census into a live "pipeline slippage" map, flagging municipalities where approved-but-unbuilt units are piling up.</p></div>
           <div class="field"><div class="field-label">Why it's unbuilt</div><p>A data-integration problem, not a modeling one &mdash; non-uniform cantonal systems, most less mature than Zurich's.</p></div>
         </div>
+        <p class="challenge"><b>Biggest challenge:</b> Zurich's own open Baugesuche dataset deliberately strips names and street addresses &mdash; matching has to run on cadastral parcel number against GWR instead, a harder join since one parcel can hold several GWR entries. Records also drop out of public view after about a year, and the freely-open GWR tier updates only annually; near-real-time (48h) data needs a demonstrated-purpose authorization request to BFS or the canton, not just an API key.</p>
         <div class="stamps"><span class="stamp low">Regulatory constraint: Low</span></div>
         <div class="datastrip">
           <div class="field-label">Datasets combined</div>
@@ -434,14 +445,14 @@
               <span class="pipe-dot"></span>
               <div>
                 <p class="pipe-title">1. Ingest</p>
-                <p class="pipe-desc">Nightly pull of structured permit data where it exists &mdash; <span class="mono">eBaugesucheZH</span> API for the Zurich pilot &mdash; plus scheduled <span class="mono">GWR</span> building-register deltas and the annual <span class="mono">STATPOP</span> / Empty Dwellings Census releases.</p>
+                <p class="pipe-desc">Daily pull of Zurich's open <span class="mono">Baugesuche</span> dataset (no street addresses &mdash; stripped by design) plus <span class="mono">GWR</span> building-register data. The free, no-registration GWR tier refreshes annually; near-real-time deltas require an authorized-access request to BFS or the canton, run as a parallel track alongside build. Annual <span class="mono">STATPOP</span> / Empty Dwellings Census releases round out the picture.</p>
               </div>
             </div>
             <div class="pipe-step">
               <span class="pipe-dot"></span>
               <div>
-                <p class="pipe-title">2. Geocode &amp; match</p>
-                <p class="pipe-desc">Resolve each permit notice's address against a GWR building ID by fuzzy string + coordinate match &mdash; address formats differ canton to canton, so this is the genuinely hard step, not the modelling.</p>
+                <p class="pipe-title">2. Match by parcel</p>
+                <p class="pipe-desc">Resolve each permit notice's cadastral parcel number &mdash; not street address, since Zurich's open dataset omits those &mdash; against GWR building IDs. One parcel can span several GWR entries, so this parcel-to-building join is the genuinely hard step, not the modelling.</p>
               </div>
             </div>
             <div class="pipe-step">
@@ -481,10 +492,11 @@
               </thead>
               <tbody>
                 <tr><td>Canton coverage</td><td>Zurich + 2 cantons with existing digital permit portals</td><td>Remaining ~21 cantons via gazette / Amtsblatt scraping + OCR</td><td>~3 wks</td></tr>
-                <tr><td>Matching engine</td><td>Rule-based address + municipality fuzzy match</td><td>ML-based entity resolution for edge cases</td><td>~1 wk</td></tr>
+                <tr><td>Matching engine</td><td>Rule-based cadastral-parcel + municipality match (addresses aren't in the open data)</td><td>ML-based entity resolution for edge cases</td><td>~1.5 wks</td></tr>
+                <tr><td>GWR access</td><td>File a demonstrated-purpose data-sharing request with BFS/canton, run in parallel with build</td><td>Production SLA / bulk-delivery agreement</td><td>~2&ndash;4 wks lead time (parallel)</td></tr>
                 <tr><td>Stall detection</td><td>Static threshold (no GWR movement past canton median + 50%)</td><td>Predictive time-to-completion model</td><td>~3 days</td></tr>
                 <tr><td>Output</td><td>Municipality choropleth map + sortable ranking table</td><td>Per-project drill-down, email / API alerts</td><td>~1 wk</td></tr>
-                <tr><td>Data refresh</td><td>Nightly batch</td><td>Real-time webhook ingestion from portals</td><td>&mdash;</td></tr>
+                <tr><td>Data refresh</td><td>Daily batch (annual on the open GWR tier until authorized access lands)</td><td>Real-time webhook ingestion from portals</td><td>&mdash;</td></tr>
               </tbody>
             </table>
           </div>
@@ -540,10 +552,11 @@
         <div class="card-head"><span class="card-num">05</span><h2>Off-Peak Transit Advisor</h2></div>
         <p class="card-gap">Transport &mdash; real crowding-forecast data is already open; nothing acts on it.</p>
         <div class="card-body">
-          <div class="field"><div class="field-label">The gap</div><p>SBB publishes real crowding forecasts (Occupancy Forecast, open, free API key). TransitFlow only visualises live positions; SBB Mobile doesn't surface crowding as a decision tool.</p></div>
+          <div class="field"><div class="field-label">The gap</div><p>SBB publishes real crowding forecasts (Occupancy Forecast, open file-based data, no registration needed) and already shows them reactively in timetable search. TransitFlow only visualises live positions. What's missing is the proactive layer &mdash; nobody nudges commuters toward a specific quieter departure before they go looking.</p></div>
           <div class="field"><div class="field-label">What it'd do</div><p>A rewards-based advisor &mdash; partnering with employers or season-ticket holders &mdash; that nudges commuters toward less-crowded departures using live forecast data.</p></div>
           <div class="field"><div class="field-label">Why it's unbuilt</div><p>A product gap, not a data gap &mdash; the data's been open for a while.</p></div>
         </div>
+        <p class="challenge"><b>Biggest challenge:</b> SBB already shows these occupancy forecasts directly in its own timetable search and app today, so the real gap isn't visibility &mdash; it's proactive personalized nudging and habit formation, a harder behavior-change problem than a data-integration one. It's also the more exposed position: SBB owns the data, the surface and the user relationship, and could ship native push nudges at any time.</p>
         <div class="stamps"><span class="stamp low">Regulatory constraint: Low</span></div>
         <div class="datastrip">
           <div class="field-label">Datasets combined</div>
@@ -557,7 +570,7 @@
               <span class="pipe-dot"></span>
               <div>
                 <p class="pipe-title">1. Ingest</p>
-                <p class="pipe-desc">Poll <span class="mono">Occupancy Forecast</span> JSON + <span class="mono">GTFS-RT</span> every ~3 minutes for a defined commuter-corridor set; pull static <span class="mono">GTFS</span> nightly for schedule and stop structure.</p>
+                <p class="pipe-desc">Download the daily <span class="mono">Occupancy Forecast</span> archive (~100MB per operator, published once a day, covering the next 92 days) and parse to the defined commuter-corridor set; pull static <span class="mono">GTFS</span> nightly for schedule and stop structure. Coverage is SBB/BLS/Thurbo/SOB/Zentralbahn rail only &mdash; no trams or buses.</p>
               </div>
             </div>
             <div class="pipe-step">
@@ -603,7 +616,7 @@
                 <tr><th>Component</th><th>MVP &mdash; ships first</th><th>Deferred to v2</th><th>Effort</th></tr>
               </thead>
               <tbody>
-                <tr><td>Route coverage</td><td>Top commuter corridors around Zurich, Geneva, Basel with full forecast coverage</td><td>National coverage, regional / rural lines</td><td>~1 wk</td></tr>
+                <tr><td>Route coverage</td><td>Top commuter rail corridors around Zurich, Geneva, Basel (SBB/BLS/Thurbo/SOB network only &mdash; no trams or buses)</td><td>National rail coverage; explore tram / bus feeds separately</td><td>~1 wk</td></tr>
                 <tr><td>Personalization</td><td>Manual home / work stop + time window</td><td>Calendar-based auto-detection of commute pattern</td><td>~3 days</td></tr>
                 <tr><td>Nudge mechanism</td><td>Daily push notification + ranked in-app list</td><td>Employer-partnered rewards / points marketplace</td><td>~1 wk</td></tr>
                 <tr><td>Trust / accuracy</td><td>Rolling forecast-vs-actual score from data.sbb.ch backtesting</td><td>Full recalibration ML model</td><td>~1 wk</td></tr>
