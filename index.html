@@ -1,0 +1,469 @@
+<title>The Unbuilt Register</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper: #f6f4ef;
+    --paper-raised: #ffffff;
+    --ink: #1b1d1f;
+    --ink-soft: #53575c;
+    --ink-faint: #83878c;
+    --line: #d8d3c9;
+    --red: #c8102e;
+    --red-soft: #fbe9ec;
+    --teal: #1f6f6b;
+    --teal-soft: #e7f2f1;
+    --shadow: 0 1px 0 rgba(27,29,31,0.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper: #14161a;
+      --paper-raised: #1b1e23;
+      --ink: #ece9e2;
+      --ink-soft: #b3b6ba;
+      --ink-faint: #797d82;
+      --line: #2b2e33;
+      --red: #e6465e;
+      --red-soft: #3a1a20;
+      --teal: #4fb3ac;
+      --teal-soft: #16302e;
+      --shadow: 0 1px 0 rgba(0,0,0,0.4);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper: #14161a;
+    --paper-raised: #1b1e23;
+    --ink: #ece9e2;
+    --ink-soft: #b3b6ba;
+    --ink-faint: #797d82;
+    --line: #2b2e33;
+    --red: #e6465e;
+    --red-soft: #3a1a20;
+    --teal: #4fb3ac;
+    --teal-soft: #16302e;
+    --shadow: 0 1px 0 rgba(0,0,0,0.4);
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size:16px;
+    line-height:1.6;
+  }
+  ::selection{ background:var(--red); color:#fff; }
+  a{ color:var(--red); }
+  a:focus-visible, button:focus-visible, .navlink:focus-visible{
+    outline:2px solid var(--red); outline-offset:3px; border-radius:2px;
+  }
+
+  .display{
+    font-family:"Archivo Expanded", "Arial Narrow", sans-serif;
+    font-weight:800;
+    text-wrap:balance;
+    letter-spacing:-0.01em;
+  }
+  .mono{
+    font-family:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+    font-variant-numeric:tabular-nums;
+  }
+  .eyebrow{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:12.5px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+  }
+
+  .wrap{
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 28px;
+  }
+
+  /* ---------- header ---------- */
+  header.masthead{
+    border-bottom:1px solid var(--line);
+    background:var(--paper);
+  }
+  .masthead-inner{
+    max-width:1180px;
+    margin:0 auto;
+    padding:18px 28px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+  }
+  .brand{
+    display:flex; align-items:baseline; gap:10px;
+  }
+  .brand .mark{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:22px; height:22px;
+    background:var(--red); color:#fff;
+    font-family:"IBM Plex Mono", monospace; font-size:11px; font-weight:600;
+    border-radius:3px;
+  }
+  .brand-name{ font-family:"IBM Plex Mono", monospace; font-size:13px; letter-spacing:0.04em; color:var(--ink-soft); }
+  #theme-toggle{
+    font-family:"IBM Plex Mono", monospace; font-size:12px;
+    background:none; border:1px solid var(--line); color:var(--ink-soft);
+    padding:7px 12px; border-radius:20px; cursor:pointer;
+  }
+  #theme-toggle:hover{ border-color:var(--ink-faint); color:var(--ink); }
+
+  /* ---------- hero ---------- */
+  .hero{ padding:64px 0 44px; border-bottom:1px solid var(--line); }
+  .hero h1{
+    font-size:clamp(34px, 5.2vw, 58px);
+    line-height:1.03;
+    margin:14px 0 20px;
+  }
+  .hero h1 .accent{ color:var(--red); }
+  .hero-lede{
+    max-width:640px;
+    font-size:18px;
+    color:var(--ink-soft);
+    margin:0 0 26px;
+  }
+  .hero-meta{
+    display:flex; flex-wrap:wrap; gap:22px;
+    font-family:"IBM Plex Mono", monospace; font-size:12.5px; color:var(--ink-faint);
+    padding-top:18px; border-top:1px solid var(--line);
+  }
+  .hero-meta b{ color:var(--ink); font-weight:600; }
+
+  /* ---------- priority strip ---------- */
+  .priority{
+    padding:30px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .priority-row{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  .priority-label{ font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-faint); letter-spacing:0.08em; text-transform:uppercase; white-space:nowrap; }
+  .chip{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:12.5px;
+    padding:6px 12px;
+    border-radius:20px;
+    border:1px solid var(--line);
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+  .chip.now{ border-color:var(--teal); color:var(--teal); background:var(--teal-soft); }
+  .chip.later{ color:var(--ink-faint); }
+
+  /* ---------- layout: rail + main ---------- */
+  .layout{
+    display:grid;
+    grid-template-columns:180px 1fr;
+    gap:48px;
+    padding:44px 0 20px;
+  }
+  .rail{ position:sticky; top:24px; align-self:start; }
+  .rail-title{ font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--ink-faint); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:14px; }
+  .rail nav{ display:flex; flex-direction:column; gap:2px; }
+  .navlink{
+    display:flex; gap:10px; align-items:baseline;
+    font-family:"IBM Plex Mono",monospace; font-size:13px;
+    color:var(--ink-soft); text-decoration:none;
+    padding:7px 0; border-left:2px solid transparent;
+    padding-left:12px;
+  }
+  .navlink:hover{ color:var(--ink); border-left-color:var(--line); }
+  .navlink .n{ color:var(--ink-faint); }
+
+  main{ min-width:0; }
+
+  /* ---------- section index card ---------- */
+  .card{
+    border-top:1px solid var(--line);
+    padding:40px 0 44px;
+    scroll-margin-top:24px;
+  }
+  .card:first-child{ border-top:none; padding-top:0; }
+  .card-head{ display:flex; gap:20px; align-items:baseline; margin-bottom:6px; }
+  .card-num{
+    font-family:"Archivo Expanded", sans-serif; font-weight:800;
+    font-size:15px; color:var(--red);
+    width:32px; flex:none;
+  }
+  .card h2{
+    font-family:"Archivo Expanded", sans-serif; font-weight:700;
+    font-size:clamp(21px,2.6vw,27px);
+    margin:0;
+    text-wrap:balance;
+  }
+  .card-gap{
+    margin:10px 0 22px 52px;
+    font-size:16.5px;
+    color:var(--ink-soft);
+    max-width:680px;
+  }
+  .card-body{ margin-left:52px; max-width:680px; }
+  .field{ margin-bottom:18px; }
+  .field-label{
+    font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:0.08em;
+    text-transform:uppercase; color:var(--ink-faint); margin-bottom:6px;
+  }
+  .field p{ margin:0; }
+
+  .stamps{ display:flex; gap:10px; flex-wrap:wrap; margin:22px 0 20px 52px; }
+  .stamp{
+    font-family:"IBM Plex Mono",monospace; font-size:11.5px; font-weight:600;
+    padding:5px 10px; border-radius:4px; border:1px solid;
+    letter-spacing:0.03em;
+  }
+  .stamp.low{ color:var(--teal); border-color:var(--teal); background:var(--teal-soft); }
+  .stamp.high{ color:var(--red); border-color:var(--red); background:var(--red-soft); }
+
+  .datastrip{ margin-left:52px; }
+  .datastrip .field-label{ margin-bottom:8px; }
+  .tags{ display:flex; flex-wrap:wrap; gap:8px; }
+  .tag{
+    font-family:"IBM Plex Mono",monospace; font-size:12px;
+    padding:5px 10px; border-radius:3px;
+    background:var(--paper-raised); border:1px solid var(--line); color:var(--ink-soft);
+  }
+
+  /* ---------- deep dive ---------- */
+  .deep{
+    border-top:3px solid var(--ink);
+    margin-top:8px;
+    padding-top:6px;
+  }
+  .deep-flag{
+    display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:11px;
+    color:#fff; background:var(--ink); padding:4px 10px; border-radius:3px;
+    letter-spacing:0.08em; text-transform:uppercase; margin-bottom:16px;
+  }
+  .pipeline{
+    margin:20px 0 8px 52px;
+    max-width:760px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+    background:var(--paper-raised);
+  }
+  .pipe-step{
+    display:grid;
+    grid-template-columns:26px 1fr;
+    gap:14px;
+    padding:16px 18px;
+    border-bottom:1px solid var(--line);
+  }
+  .pipe-step:last-child{ border-bottom:none; }
+  .pipe-dot{
+    width:9px; height:9px; border-radius:50%;
+    background:var(--red);
+    margin-top:6px;
+  }
+  .pipe-title{ font-weight:600; font-size:15px; margin:0 0 3px; }
+  .pipe-desc{ margin:0; color:var(--ink-soft); font-size:14.5px; }
+  .pipe-desc .mono{ font-size:13px; background:var(--teal-soft); color:var(--teal); padding:1px 5px; border-radius:3px; }
+
+  .mvp-table{ margin:22px 0 8px 52px; max-width:760px; border-collapse:collapse; width:calc(100% - 52px); }
+  .mvp-scroll{ overflow-x:auto; margin-left:52px; }
+  table.mvp{ border-collapse:collapse; width:100%; max-width:760px; font-size:14.5px; }
+  table.mvp th{
+    text-align:left; font-family:"IBM Plex Mono",monospace; font-size:11px; text-transform:uppercase;
+    letter-spacing:0.06em; color:var(--ink-faint); padding:8px 14px 8px 0; border-bottom:1px solid var(--line);
+  }
+  table.mvp td{ padding:11px 14px 11px 0; border-bottom:1px solid var(--line); vertical-align:top; color:var(--ink-soft); }
+  table.mvp td:first-child, table.mvp th:first-child{ color:var(--ink); font-weight:600; white-space:nowrap; }
+
+  /* ---------- footer ---------- */
+  footer{
+    border-top:1px solid var(--line);
+    padding:36px 0 60px;
+    margin-top:20px;
+  }
+  footer .foot-row{ display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; align-items:baseline; }
+  footer p{ color:var(--ink-faint); font-size:13px; margin:0; }
+  .back-top{ font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-soft); text-decoration:none; }
+
+  @media (max-width: 860px){
+    .layout{ grid-template-columns:1fr; gap:0; }
+    .rail{ position:static; margin-bottom:8px; }
+    .rail nav{ flex-direction:row; overflow-x:auto; gap:14px; padding-bottom:10px; }
+    .navlink{ padding-left:0; border-left:none; flex:none; }
+    .card-gap, .card-body, .stamps, .datastrip, .pipeline, .mvp-scroll{ margin-left:0; }
+    .card-head{ gap:12px; }
+  }
+</style>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="brand">
+      <span class="mark">CH</span>
+      <span class="brand-name">OPEN DATA / UNBUILT SYSTEMS</span>
+    </div>
+    <button id="theme-toggle" type="button" aria-pressed="false">Dark mode</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <p class="eyebrow">A working paper &middot; derived from opendata.swiss, BFS, Obsan, opentransportdata.swiss</p>
+    <h1 class="display">Six systems Switzerland<br>hasn't <span class="accent">built yet</span>.</h1>
+    <p class="hero-lede">Five documented public problems &mdash; housing, elderly care, transit load, grid strain, urban heat &mdash; each already has open, usable data behind it. This register maps what's built, what's missing, and what a small team could ship first.</p>
+    <div class="hero-meta">
+      <span><b>6</b> proposals</span>
+      <span><b>17</b> sources checked against current deployments</span>
+      <span><b>2</b> selected for MVP scoping</span>
+      <span>Compiled Aug 2026</span>
+    </div>
+  </section>
+
+  <section class="priority">
+    <div class="priority-row">
+      <span class="priority-label">Build order</span>
+      <span class="chip now">01 &middot; Permit Bottleneck Tracker &mdash; build first</span>
+      <span class="chip now">05 &middot; Off-Peak Transit Advisor &mdash; build first</span>
+      <span class="chip later">03 &middot; Grid Flexibility Signal &mdash; needs new dataset maturity</span>
+      <span class="chip later">04 &middot; Heat Vulnerability Warning &mdash; needs health partnership</span>
+      <span class="chip later">02 &middot; Nursing Capacity Matching &mdash; hardest, labor-market dynamics</span>
+      <span class="chip later">06 &middot; Municipal Coordination Layer &mdash; depends on 01&ndash;05 first</span>
+    </div>
+  </section>
+
+  <div class="layout">
+    <aside class="rail">
+      <div class="rail-title">Register</div>
+      <nav>
+        <a class="navlink" href="#p1"><span class="n">01</span> Permit Tracker</a>
+        <a class="navlink" href="#p2"><span class="n">02</span> Nursing Matching</a>
+        <a class="navlink" href="#p3"><span class="n">03</span> Grid Signal</a>
+        <a class="navlink" href="#p4"><span class="n">04</span> Heat Warning</a>
+        <a class="navlink" href="#p5"><span class="n">05</span> Transit Advisor</a>
+        <a class="navlink" href="#p6"><span class="n">06</span> Coordination Layer</a>
+      </nav>
+    </aside>
+
+    <main>
+      <article class="card" id="p1">
+        <div class="card-head"><span class="card-num">01</span><h2>Cross-Cantonal Permit Bottleneck Tracker</h2></div>
+        <p class="card-gap">Housing &mdash; digitalization is happening canton-by-canton in isolation, and nobody tracks where approved units actually stall.</p>
+        <div class="card-body">
+          <div class="field"><div class="field-label">The gap</div><p>Zurich's eBaugesucheZH (live since April 2024) has no national equivalent. The federal government's 30-measure housing action plan has no public execution-tracking layer. Delays come from objections, appeals and municipal friction &mdash; not primarily construction capacity &mdash; but no dataset shows <em>where</em> applications stall.</p></div>
+          <div class="field"><div class="field-label">What it'd do</div><p>Aggregate cantonal permit-portal data with GWR building starts, STATPOP growth and the Empty Dwellings Census into a live "pipeline slippage" map, flagging municipalities where approved-but-unbuilt units are piling up.</p></div>
+          <div class="field"><div class="field-label">Why it's unbuilt</div><p>A data-integration problem, not a modeling one &mdash; non-uniform cantonal systems, most less mature than Zurich's.</p></div>
+        </div>
+        <div class="stamps"><span class="stamp low">Regulatory constraint: Low</span></div>
+        <div class="datastrip">
+          <div class="field-label">Datasets combined</div>
+          <div class="tags"><span class="tag">GWR &mdash; Register of Buildings</span><span class="tag">STATPOP</span><span class="tag">Empty Dwellings Census</span><span class="tag">Cantonal permit portals</span></div>
+        </div>
+      </article>
+
+      <article class="card" id="p2">
+        <div class="card-head"><span class="card-num">02</span><h2>Cross-Cantonal Nursing Capacity Matching</h2></div>
+        <p class="card-gap">Elderly care &mdash; shortage severity varies enormously by canton, but nothing routes staff to where the strain is worst.</p>
+        <div class="card-body">
+          <div class="field"><div class="field-label">The gap</div><p>Obsan's monitoring shows Central Switzerland alone needs 14,000 more nurses by 2029 &mdash; but each canton plans in isolation, with no shared view of relative shortfall.</p></div>
+          <div class="field"><div class="field-label">What it'd do</div><p>A live capacity-vs-demand board combining Obsan workforce data, STATPOP age-cohort projections and hospital statistics, paired with an opt-in layer where agencies see cross-border shortfall hotspots.</p></div>
+          <div class="field"><div class="field-label">Why it's unbuilt</div><p>Obsan's portal (July 2024) is monitoring-only &mdash; nobody has built the allocation layer on top of it.</p></div>
+        </div>
+        <div class="stamps"><span class="stamp high">Regulatory constraint: High</span></div>
+        <div class="datastrip">
+          <div class="field-label">Datasets combined</div>
+          <div class="tags"><span class="tag">Obsan nursing monitoring</span><span class="tag">STATPOP cohorts</span><span class="tag">Hospital statistics</span></div>
+        </div>
+      </article>
+
+      <article class="card" id="p3">
+        <div class="card-head"><span class="card-num">03</span><h2>Distribution-Grid Stress Forecast &amp; Flexibility Signal</h2></div>
+        <p class="card-gap">Energy &mdash; a new 2M-point distribution grid dataset exists, unused by any citizen-facing tool.</p>
+        <div class="card-body">
+          <div class="field"><div class="field-label">The gap</div><p>Swiss-PDGs (published 2025) maps 2M+ low-voltage connection points. Swissgrid manages transmission-level congestion; local low-voltage stress from rooftop solar is unmanaged from a citizen standpoint.</p></div>
+          <div class="field"><div class="field-label">What it'd do</div><p>Combine the distribution-grid dataset with Energy Dashboard PV data and MeteoSwiss irradiance to predict neighbourhood-level stress hours, then push a simple opt-in shift signal to households.</p></div>
+          <div class="field"><div class="field-label">Why it's unbuilt</div><p>The underlying grid dataset is only months old &mdash; nobody has built on it yet.</p></div>
+        </div>
+        <div class="stamps"><span class="stamp high">Regulatory constraint: High for raw meter data</span></div>
+        <div class="datastrip">
+          <div class="field-label">Datasets combined</div>
+          <div class="tags"><span class="tag">Swiss-PDGs grid model</span><span class="tag">Energy Dashboard PV</span><span class="tag">MeteoSwiss irradiance</span></div>
+        </div>
+      </article>
+
+      <article class="card" id="p4">
+        <div class="card-head"><span class="card-num">04</span><h2>Heat-Vulnerability Early Warning</h2></div>
+        <p class="card-gap">Climate &mdash; hotspot maps exist for planners; nothing links them to at-risk residents.</p>
+        <div class="card-body">
+          <div class="field"><div class="field-label">The gap</div><p>LCZ maps and the UMEP modelling tool are expert/planner-facing (QGIS). The Swiss Cities Association is currently calling for a national heatwave plan precisely because no coordination layer exists yet.</p></div>
+          <div class="field"><div class="field-label">What it'd do</div><p>Overlay LCZ/UMEP hotspots with STATPOP elderly-density and GWR building-age to generate a ranked outreach list for municipal health services before heatwaves.</p></div>
+          <div class="field"><div class="field-label">Why it's unbuilt</div><p>The modelling piece is done; the population-targeting and outreach-logistics layer is not.</p></div>
+        </div>
+        <div class="stamps"><span class="stamp low">Regulatory constraint: Low</span></div>
+        <div class="datastrip">
+          <div class="field-label">Datasets combined</div>
+          <div class="tags"><span class="tag">MeteoSwiss LCZ / UMEP</span><span class="tag">STATPOP density</span><span class="tag">GWR building age</span></div>
+        </div>
+      </article>
+
+      <article class="card" id="p5">
+        <div class="card-head"><span class="card-num">05</span><h2>Off-Peak Transit Advisor</h2></div>
+        <p class="card-gap">Transport &mdash; real crowding-forecast data is already open; nothing acts on it.</p>
+        <div class="card-body">
+          <div class="field"><div class="field-label">The gap</div><p>SBB publishes real crowding forecasts (Occupancy Forecast, open, free API key). TransitFlow only visualises live positions; SBB Mobile doesn't surface crowding as a decision tool.</p></div>
+          <div class="field"><div class="field-label">What it'd do</div><p>A rewards-based advisor &mdash; partnering with employers or season-ticket holders &mdash; that nudges commuters toward less-crowded departures using live forecast data.</p></div>
+          <div class="field"><div class="field-label">Why it's unbuilt</div><p>A product gap, not a data gap &mdash; the data's been open for a while.</p></div>
+        </div>
+        <div class="stamps"><span class="stamp low">Regulatory constraint: Low</span></div>
+        <div class="datastrip">
+          <div class="field-label">Datasets combined</div>
+          <div class="tags"><span class="tag">Occupancy Forecast (JSON)</span><span class="tag">GTFS / GTFS-RT</span><span class="tag">data.sbb.ch flows</span></div>
+        </div>
+      </article>
+
+      <article class="card" id="p6">
+        <div class="card-head"><span class="card-num">06</span><h2>Municipal Coordination Layer</h2></div>
+        <p class="card-gap">Cross-cutting &mdash; housing, care, transit, grid and heat are planned by separate offices with no shared view.</p>
+        <div class="card-body">
+          <div class="field"><div class="field-label">The gap</div><p>A housing development can be approved without visibility into whether the local grid, transit line, or nearby care facilities can absorb it.</p></div>
+          <div class="field"><div class="field-label">What it'd do</div><p>A single-pane tool for municipal planners overlaying all five data layers so decisions account for compounding local strain rather than isolated sign-off.</p></div>
+          <div class="field"><div class="field-label">Why it's unbuilt</div><p>The most ambitious idea here &mdash; it needs 01&ndash;05 to exist first as data layers, which is likely why nobody's attempted it.</p></div>
+        </div>
+        <div class="stamps"><span class="stamp high">Regulatory constraint: Depends on inputs</span></div>
+        <div class="datastrip">
+          <div class="field-label">Datasets combined</div>
+          <div class="tags"><span class="tag">All of 01&ndash;05</span></div>
+        </div>
+      </article>
+    </main>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap foot-row">
+    <p>Compiled from opendata.swiss, BFS, Obsan, opentransportdata.swiss, BFE, MeteoSwiss and independent reporting. Not an official government publication.</p>
+    <a class="back-top" href="#top">&uarr; back to top</a>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var btn = document.getElementById('theme-toggle');
+    var root = document.documentElement;
+    var stored = null;
+    try { stored = localStorage.getItem('theme'); } catch(e) {}
+    if (stored === 'dark' || stored === 'light') {
+      root.setAttribute('data-theme', stored);
+      btn.setAttribute('aria-pressed', String(stored === 'dark'));
+      btn.textContent = stored === 'dark' ? 'Light mode' : 'Dark mode';
+    }
+    btn.addEventListener('click', function(){
+      var current = root.getAttribute('data-theme');
+      var next = current === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      btn.setAttribute('aria-pressed', String(next === 'dark'));
+      btn.textContent = next === 'dark' ? 'Light mode' : 'Dark mode';
+      try { localStorage.setItem('theme', next); } catch(e) {}
+    });
+  })();
+</script>
