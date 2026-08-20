@@ -139,13 +139,7 @@
   }
   .hero-meta b{ color:var(--ink); font-weight:600; }
 
-  /* ---------- priority strip ---------- */
-  .priority{
-    padding:30px 0;
-    border-bottom:1px solid var(--line);
-  }
-  .priority-row{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
-  .priority-label{ font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-faint); letter-spacing:0.08em; text-transform:uppercase; white-space:nowrap; }
+  /* ---------- chips (shared) ---------- */
   .chip{
     font-family:"IBM Plex Mono", monospace;
     font-size:12.5px;
@@ -154,9 +148,62 @@
     border:1px solid var(--line);
     color:var(--ink-soft);
     white-space:nowrap;
+    display:inline-block;
   }
   .chip.now{ border-color:var(--teal); color:var(--teal); background:var(--teal-soft); }
   .chip.later{ color:var(--ink-faint); }
+
+  /* ---------- executive summary ---------- */
+  .exec{ padding:36px 0 40px; border-bottom:1px solid var(--line); scroll-margin-top:24px; }
+  .exec-panel{
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:32px 34px;
+  }
+  .exec-title{
+    font-family:"Archivo Expanded", sans-serif; font-weight:800;
+    font-size:clamp(21px,2.8vw,28px);
+    margin:10px 0 4px;
+    text-wrap:balance;
+  }
+  .exec-lede{ font-size:16.5px; color:var(--ink-soft); max-width:760px; margin:10px 0 28px; }
+  .exec-stats{
+    display:grid;
+    grid-template-columns:repeat(4, minmax(120px,1fr));
+    gap:16px;
+    margin-bottom:30px;
+  }
+  .exec-stat{ border-top:2px solid var(--red); padding-top:10px; }
+  .exec-stat .num{
+    font-family:"IBM Plex Mono", monospace; font-weight:600;
+    font-size:26px; display:block; color:var(--ink);
+  }
+  .exec-stat .label{
+    font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--ink-faint);
+    text-transform:uppercase; letter-spacing:0.06em;
+  }
+  .exec-scroll{ overflow-x:auto; margin-bottom:22px; }
+  table.exec-table{ border-collapse:collapse; width:100%; min-width:560px; font-size:14px; }
+  table.exec-table th{
+    text-align:left; font-family:"IBM Plex Mono",monospace; font-size:11px; text-transform:uppercase;
+    letter-spacing:0.06em; color:var(--ink-faint); padding:8px 14px 8px 0; border-bottom:1px solid var(--line);
+  }
+  table.exec-table td{ padding:11px 14px 11px 0; border-bottom:1px solid var(--line); vertical-align:middle; color:var(--ink-soft); }
+  table.exec-table td:first-child{ color:var(--ink-faint); }
+  table.exec-table td:nth-child(2){ color:var(--ink); font-weight:600; }
+  .exec-callout{
+    margin:0; padding:16px 18px;
+    border-left:3px solid var(--teal);
+    background:var(--teal-soft);
+    border-radius:0 6px 6px 0;
+    font-size:14.5px; color:var(--ink-soft);
+  }
+  .exec-callout b{ color:var(--ink); }
+  @media (max-width:600px){
+    .exec-panel{ padding:24px 20px; }
+    .exec-stats{ grid-template-columns:repeat(2, minmax(100px,1fr)); }
+  }
 
   /* ---------- layout: rail + main ---------- */
   .layout{
@@ -320,15 +367,34 @@
     </div>
   </section>
 
-  <section class="priority">
-    <div class="priority-row">
-      <span class="priority-label">Build order</span>
-      <span class="chip now">01 &middot; Permit Bottleneck Tracker &mdash; build first</span>
-      <span class="chip now">05 &middot; Off-Peak Transit Advisor &mdash; build first</span>
-      <span class="chip later">03 &middot; Grid Flexibility Signal &mdash; needs new dataset maturity</span>
-      <span class="chip later">04 &middot; Heat Vulnerability Warning &mdash; needs health partnership</span>
-      <span class="chip later">02 &middot; Nursing Capacity Matching &mdash; hardest, labor-market dynamics</span>
-      <span class="chip later">06 &middot; Municipal Coordination Layer &mdash; depends on 01&ndash;05 first</span>
+  <section class="exec" id="summary">
+    <div class="exec-panel">
+      <p class="eyebrow">Executive summary &middot; read this first</p>
+      <h2 class="exec-title">Two of these are buildable now. Four are waiting on something else.</h2>
+      <p class="exec-lede">Switzerland has strong open data on housing, elderly care, transit, energy and heat &mdash; almost none of it has been turned into a citizen- or planner-facing tool. Of the six systems assessed below, two need no new dataset, no new law and no new partnership: just integration work. The other four are blocked on dataset maturity, a health-sector partnership, or labor-market complexity outside what a small team controls.</p>
+
+      <div class="exec-stats">
+        <div class="exec-stat"><span class="num mono">6</span><span class="label">Systems assessed</span></div>
+        <div class="exec-stat"><span class="num mono">2</span><span class="label">Buildable now</span></div>
+        <div class="exec-stat"><span class="num mono">17</span><span class="label">Sources checked</span></div>
+        <div class="exec-stat"><span class="num mono">~5 wks</span><span class="label">To first MVP</span></div>
+      </div>
+
+      <div class="exec-scroll">
+        <table class="exec-table">
+          <thead><tr><th>#</th><th>System</th><th>Domain</th><th>What's blocking it</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>01</td><td>Permit Bottleneck Tracker</td><td>Housing</td><td>Nothing &mdash; integration only</td><td><span class="chip now">Build first</span></td></tr>
+            <tr><td>05</td><td>Off-Peak Transit Advisor</td><td>Transport</td><td>Nothing &mdash; product gap only</td><td><span class="chip now">Build first</span></td></tr>
+            <tr><td>03</td><td>Grid Flexibility Signal</td><td>Energy</td><td>Dataset only months old</td><td><span class="chip later">Wait on data maturity</span></td></tr>
+            <tr><td>04</td><td>Heat Vulnerability Warning</td><td>Climate</td><td>Needs a health-sector partner</td><td><span class="chip later">Wait on partnership</span></td></tr>
+            <tr><td>02</td><td>Nursing Capacity Matching</td><td>Elderly care</td><td>Labor-market &amp; regulatory</td><td><span class="chip later">Hardest &mdash; high constraint</span></td></tr>
+            <tr><td>06</td><td>Municipal Coordination Layer</td><td>Cross-cutting</td><td>Needs 01&ndash;05 built first</td><td><span class="chip later">Depends on others</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="exec-callout"><b>Bottom line:</b> start with 01 and 05 &mdash; both ship in roughly a month on existing open data, with no regulatory unlock needed. The rest are worth revisiting once those two prove the model.</p>
     </div>
   </section>
 
@@ -336,6 +402,7 @@
     <aside class="rail">
       <div class="rail-title">Register</div>
       <nav>
+        <a class="navlink" href="#summary"><span class="n">00</span> Summary</a>
         <a class="navlink" href="#p1"><span class="n">01</span> Permit Tracker</a>
         <a class="navlink" href="#p2"><span class="n">02</span> Nursing Matching</a>
         <a class="navlink" href="#p3"><span class="n">03</span> Grid Signal</a>
