@@ -359,6 +359,69 @@
           <div class="field-label">Datasets combined</div>
           <div class="tags"><span class="tag">GWR &mdash; Register of Buildings</span><span class="tag">STATPOP</span><span class="tag">Empty Dwellings Census</span><span class="tag">Cantonal permit portals</span></div>
         </div>
+
+        <div class="deep">
+          <span class="deep-flag">Deep dive &middot; data pipeline &amp; MVP</span>
+          <div class="pipeline">
+            <div class="pipe-step">
+              <span class="pipe-dot"></span>
+              <div>
+                <p class="pipe-title">1. Ingest</p>
+                <p class="pipe-desc">Nightly pull of structured permit data where it exists &mdash; <span class="mono">eBaugesucheZH</span> API for the Zurich pilot &mdash; plus scheduled <span class="mono">GWR</span> building-register deltas and the annual <span class="mono">STATPOP</span> / Empty Dwellings Census releases.</p>
+              </div>
+            </div>
+            <div class="pipe-step">
+              <span class="pipe-dot"></span>
+              <div>
+                <p class="pipe-title">2. Geocode &amp; match</p>
+                <p class="pipe-desc">Resolve each permit notice's address against a GWR building ID by fuzzy string + coordinate match &mdash; address formats differ canton to canton, so this is the genuinely hard step, not the modelling.</p>
+              </div>
+            </div>
+            <div class="pipe-step">
+              <span class="pipe-dot"></span>
+              <div>
+                <p class="pipe-title">3. Compute stall index</p>
+                <p class="pipe-desc">For each matched application, compare elapsed time since filing against that canton's median approval-to-groundbreak time. Flag anything past the 90th percentile with no matching GWR construction-start record.</p>
+              </div>
+            </div>
+            <div class="pipe-step">
+              <span class="pipe-dot"></span>
+              <div>
+                <p class="pipe-title">4. Store</p>
+                <p class="pipe-desc">Postgres + PostGIS: three tables &mdash; <span class="mono">permit_notice</span>, <span class="mono">building</span> (from GWR), <span class="mono">municipality_rollup</span> &mdash; indexed by canton and municipality for the map layer.</p>
+              </div>
+            </div>
+            <div class="pipe-step">
+              <span class="pipe-dot"></span>
+              <div>
+                <p class="pipe-title">5. Serve</p>
+                <p class="pipe-desc">Read-only REST endpoint + a vector-tile municipality choropleth by stall severity, refreshed nightly.</p>
+              </div>
+            </div>
+            <div class="pipe-step">
+              <span class="pipe-dot"></span>
+              <div>
+                <p class="pipe-title">6. Publish</p>
+                <p class="pipe-desc">Public dashboard, plus the same API left open for cantonal housing offices (BWO) or journalists to query directly.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mvp-scroll">
+            <table class="mvp">
+              <thead>
+                <tr><th>Component</th><th>MVP &mdash; ships first</th><th>Deferred to v2</th><th>Effort</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Canton coverage</td><td>Zurich + 2 cantons with existing digital permit portals</td><td>Remaining ~21 cantons via gazette / Amtsblatt scraping + OCR</td><td>~3 wks</td></tr>
+                <tr><td>Matching engine</td><td>Rule-based address + municipality fuzzy match</td><td>ML-based entity resolution for edge cases</td><td>~1 wk</td></tr>
+                <tr><td>Stall detection</td><td>Static threshold (no GWR movement past canton median + 50%)</td><td>Predictive time-to-completion model</td><td>~3 days</td></tr>
+                <tr><td>Output</td><td>Municipality choropleth map + sortable ranking table</td><td>Per-project drill-down, email / API alerts</td><td>~1 wk</td></tr>
+                <tr><td>Data refresh</td><td>Nightly batch</td><td>Real-time webhook ingestion from portals</td><td>&mdash;</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </article>
 
       <article class="card" id="p2">
@@ -418,6 +481,69 @@
         <div class="datastrip">
           <div class="field-label">Datasets combined</div>
           <div class="tags"><span class="tag">Occupancy Forecast (JSON)</span><span class="tag">GTFS / GTFS-RT</span><span class="tag">data.sbb.ch flows</span></div>
+        </div>
+
+        <div class="deep">
+          <span class="deep-flag">Deep dive &middot; data pipeline &amp; MVP</span>
+          <div class="pipeline">
+            <div class="pipe-step">
+              <span class="pipe-dot"></span>
+              <div>
+                <p class="pipe-title">1. Ingest</p>
+                <p class="pipe-desc">Poll <span class="mono">Occupancy Forecast</span> JSON + <span class="mono">GTFS-RT</span> every ~3 minutes for a defined commuter-corridor set; pull static <span class="mono">GTFS</span> nightly for schedule and stop structure.</p>
+              </div>
+            </div>
+            <div class="pipe-step">
+              <span class="pipe-dot"></span>
+              <div>
+                <p class="pipe-title">2. Normalize</p>
+                <p class="pipe-desc">Join each occupancy-forecast trip ID to its GTFS trip and stop sequence, so every scheduled departure carries a predicted crowding band &mdash; low, medium, high.</p>
+              </div>
+            </div>
+            <div class="pipe-step">
+              <span class="pipe-dot"></span>
+              <div>
+                <p class="pipe-title">3. Personalize</p>
+                <p class="pipe-desc">User sets a home stop, work stop and an acceptable departure window (e.g. 07:15&ndash;09:00). The engine ranks that window's departures by predicted crowding.</p>
+              </div>
+            </div>
+            <div class="pipe-step">
+              <span class="pipe-dot"></span>
+              <div>
+                <p class="pipe-title">4. Nudge</p>
+                <p class="pipe-desc">One ranked suggestion each morning via web push &mdash; "the 08:12 is forecast quieter than your usual 07:52" &mdash; and log which departure the user actually took.</p>
+              </div>
+            </div>
+            <div class="pipe-step">
+              <span class="pipe-dot"></span>
+              <div>
+                <p class="pipe-title">5. Calibrate</p>
+                <p class="pipe-desc">Nightly job compares yesterday's forecasts against <span class="mono">data.sbb.ch</span> actuals to compute a rolling accuracy score, shown in-app as a trust indicator.</p>
+              </div>
+            </div>
+            <div class="pipe-step">
+              <span class="pipe-dot"></span>
+              <div>
+                <p class="pipe-title">6. Serve</p>
+                <p class="pipe-desc">Installable PWA on mobile web &mdash; no app-store review cycle blocking iteration on the ranking model.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mvp-scroll">
+            <table class="mvp">
+              <thead>
+                <tr><th>Component</th><th>MVP &mdash; ships first</th><th>Deferred to v2</th><th>Effort</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Route coverage</td><td>Top commuter corridors around Zurich, Geneva, Basel with full forecast coverage</td><td>National coverage, regional / rural lines</td><td>~1 wk</td></tr>
+                <tr><td>Personalization</td><td>Manual home / work stop + time window</td><td>Calendar-based auto-detection of commute pattern</td><td>~3 days</td></tr>
+                <tr><td>Nudge mechanism</td><td>Daily push notification + ranked in-app list</td><td>Employer-partnered rewards / points marketplace</td><td>~1 wk</td></tr>
+                <tr><td>Trust / accuracy</td><td>Rolling forecast-vs-actual score from data.sbb.ch backtesting</td><td>Full recalibration ML model</td><td>~1 wk</td></tr>
+                <tr><td>Platform</td><td>Installable PWA, mobile web</td><td>Native iOS / Android apps</td><td>~1&ndash;2 wks</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </article>
 
