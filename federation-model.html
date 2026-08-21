@@ -1,0 +1,562 @@
+<title>The Federation Model</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper: #f6f4ef;
+    --paper-raised: #ffffff;
+    --ink: #1b1d1f;
+    --ink-soft: #53575c;
+    --ink-faint: #83878c;
+    --line: #d8d3c9;
+    --red: #c8102e;
+    --red-soft: #fbe9ec;
+    --teal: #1f6f6b;
+    --teal-soft: #e7f2f1;
+    --amber: #8a5a12;
+    --amber-soft: #f5ecd8;
+    --plum: #743a5c;
+    --plum-soft: #f2e4ec;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper: #14161a;
+      --paper-raised: #1b1e23;
+      --ink: #ece9e2;
+      --ink-soft: #b3b6ba;
+      --ink-faint: #797d82;
+      --line: #2b2e33;
+      --red: #e6465e;
+      --red-soft: #3a1a20;
+      --teal: #4fb3ac;
+      --teal-soft: #16302e;
+      --amber: #d0a350;
+      --amber-soft: #3a2f18;
+      --plum: #c583a8;
+      --plum-soft: #33202c;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper: #14161a;
+    --paper-raised: #1b1e23;
+    --ink: #ece9e2;
+    --ink-soft: #b3b6ba;
+    --ink-faint: #797d82;
+    --line: #2b2e33;
+    --red: #e6465e;
+    --red-soft: #3a1a20;
+    --teal: #4fb3ac;
+    --teal-soft: #16302e;
+    --amber: #d0a350;
+    --amber-soft: #3a2f18;
+    --plum: #c583a8;
+    --plum-soft: #33202c;
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size:16px;
+    line-height:1.6;
+  }
+  ::selection{ background:var(--red); color:#fff; }
+  a{ color:var(--red); }
+  a:focus-visible, button:focus-visible, .navlink:focus-visible{
+    outline:2px solid var(--red); outline-offset:3px; border-radius:2px;
+  }
+
+  .display{
+    font-family:"Archivo Expanded", "Arial Narrow", sans-serif;
+    font-weight:800;
+    text-wrap:balance;
+    letter-spacing:-0.01em;
+  }
+  .mono{
+    font-family:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+    font-variant-numeric:tabular-nums;
+  }
+  .eyebrow{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:12.5px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+  }
+
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 28px; }
+
+  header.masthead{ border-bottom:1px solid var(--line); background:var(--paper); }
+  .masthead-inner{
+    max-width:1180px; margin:0 auto; padding:18px 28px;
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+  }
+  .brand{ display:flex; align-items:baseline; gap:10px; }
+  .brand .mark{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:22px; height:22px; background:var(--ink); color:var(--paper);
+    font-family:"IBM Plex Mono", monospace; font-size:12px; font-weight:600; border-radius:3px;
+  }
+  .brand-name{ font-family:"IBM Plex Mono", monospace; font-size:13px; letter-spacing:0.04em; color:var(--ink-soft); }
+  #theme-toggle{
+    font-family:"IBM Plex Mono", monospace; font-size:12px;
+    background:none; border:1px solid var(--line); color:var(--ink-soft);
+    padding:7px 12px; border-radius:20px; cursor:pointer;
+  }
+  #theme-toggle:hover{ border-color:var(--ink-faint); color:var(--ink); }
+
+  .hero{ padding:60px 0 40px; border-bottom:1px solid var(--line); }
+  .hero h1{ font-size:clamp(30px, 4.4vw, 48px); line-height:1.08; margin:14px 0 20px; }
+  .hero-lede{ max-width:700px; font-size:18px; color:var(--ink-soft); margin:0; }
+
+  .verdict{ padding:32px 0 40px; border-bottom:1px solid var(--line); }
+  .verdict-panel{
+    background:var(--paper-raised); border:1px solid var(--line); border-radius:12px; padding:30px 32px;
+  }
+  .verdict-title{
+    font-family:"Archivo Expanded", sans-serif; font-weight:800;
+    font-size:clamp(20px,2.6vw,26px); margin:10px 0 14px; text-wrap:balance;
+  }
+  .verdict-grid{ display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:6px; }
+  .verdict-col .col-label{
+    font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase;
+    margin-bottom:8px; font-weight:600;
+  }
+  .verdict-col.yes .col-label{ color:var(--teal); }
+  .verdict-col.no .col-label{ color:var(--plum); }
+  .verdict-col p{ margin:0; color:var(--ink-soft); font-size:15px; }
+  @media (max-width:700px){ .verdict-grid{ grid-template-columns:1fr; } }
+
+  .layout{ display:grid; grid-template-columns:190px 1fr; gap:48px; padding:44px 0 20px; }
+  .rail{ position:sticky; top:24px; align-self:start; }
+  .rail-title{ font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--ink-faint); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:14px; }
+  .rail nav{ display:flex; flex-direction:column; gap:2px; }
+  .navlink{
+    display:block; font-family:"IBM Plex Mono",monospace; font-size:12.5px;
+    color:var(--ink-soft); text-decoration:none; padding:7px 0 7px 12px;
+    border-left:2px solid transparent;
+  }
+  .navlink:hover{ color:var(--ink); border-left-color:var(--line); }
+  main{ min-width:0; }
+
+  section.block{ border-top:1px solid var(--line); padding:40px 0 8px; scroll-margin-top:24px; }
+  section.block:first-child{ border-top:none; padding-top:0; }
+  .block h2{
+    font-family:"Archivo Expanded", sans-serif; font-weight:700;
+    font-size:clamp(20px,2.4vw,25px); margin:0 0 6px;
+  }
+  .block .block-gap{ color:var(--ink-soft); font-size:15.5px; max-width:700px; margin:0 0 26px; }
+  .block p.body-text{ max-width:700px; color:var(--ink-soft); font-size:15.5px; }
+
+  figure.diagram{ margin:0 0 30px; }
+  .diagram-scroll{ overflow-x:auto; border:1px solid var(--line); border-radius:10px; background:var(--paper-raised); }
+  .diagram-scroll svg{ display:block; min-width:760px; width:100%; height:auto; }
+  figcaption{ margin-top:10px; font-size:13.5px; color:var(--ink-faint); max-width:700px; }
+  figcaption b{ color:var(--ink-soft); }
+
+  .legend{ display:flex; flex-wrap:wrap; gap:16px; margin:14px 0 28px; font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-soft); }
+  .legend .sw{ display:inline-flex; align-items:center; gap:7px; }
+  .legend .dot{ width:10px; height:10px; border-radius:2px; display:inline-block; }
+
+  .svc-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:18px; margin:8px 0 34px; }
+  .svc{ border:1px solid var(--line); border-radius:8px; padding:16px 18px; background:var(--paper-raised); }
+  .svc h3{ font-family:"IBM Plex Mono",monospace; font-size:12.5px; letter-spacing:0.04em; margin:0 0 4px; color:var(--ink); }
+  .svc .modeled{ font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--red); margin:0 0 8px; }
+  .svc p.desc{ margin:0; font-size:13.5px; color:var(--ink-soft); }
+
+  .tbl-scroll{ overflow-x:auto; margin-bottom:34px; }
+  table.brief{ border-collapse:collapse; width:100%; min-width:680px; font-size:14px; }
+  table.brief th{
+    text-align:left; font-family:"IBM Plex Mono",monospace; font-size:11px; text-transform:uppercase;
+    letter-spacing:0.05em; color:var(--ink-faint); padding:9px 14px 9px 0; border-bottom:1px solid var(--line);
+  }
+  table.brief td{ padding:12px 14px 12px 0; border-bottom:1px solid var(--line); vertical-align:top; color:var(--ink-soft); }
+  table.brief td:first-child{ color:var(--ink); font-weight:600; white-space:nowrap; }
+  .tier{
+    font-family:"IBM Plex Mono",monospace; font-size:11.5px; font-weight:600;
+    padding:4px 9px; border-radius:4px; border:1px solid; white-space:nowrap; display:inline-block;
+  }
+  .tier.shared{ color:var(--teal); border-color:var(--teal); background:var(--teal-soft); }
+  .tier.partial{ color:var(--amber); border-color:var(--amber); background:var(--amber-soft); }
+  .tier.isolated{ color:var(--plum); border-color:var(--plum); background:var(--plum-soft); }
+  .tier.na{ color:var(--ink-faint); border-color:var(--line); background:transparent; }
+
+  .rollout-strip{
+    display:flex; flex-wrap:wrap; gap:12px; margin:8px 0 32px;
+  }
+  .rollout-step{
+    flex:1 1 200px; border:1px solid var(--line); border-radius:8px; padding:14px 16px; background:var(--paper-raised);
+  }
+  .rollout-step .n{ font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--red); font-weight:600; }
+  .rollout-step p{ margin:6px 0 0; font-size:13.5px; color:var(--ink-soft); }
+
+  .close-callout{
+    margin:8px 0 40px; padding:18px 20px; border-left:3px solid var(--teal); background:var(--teal-soft);
+    border-radius:0 8px 8px 0; font-size:15px; color:var(--ink-soft); max-width:760px;
+  }
+  .close-callout b{ color:var(--ink); }
+
+  footer{ border-top:1px solid var(--line); padding:32px 0 56px; margin-top:10px; }
+  footer p{ color:var(--ink-faint); font-size:13px; margin:0 0 6px; max-width:760px; }
+  footer a{ color:var(--ink-soft); }
+
+  @media (max-width: 860px){
+    .layout{ grid-template-columns:1fr; gap:0; }
+    .rail{ position:static; margin-bottom:8px; }
+    .rail nav{ flex-direction:row; overflow-x:auto; gap:14px; padding-bottom:10px; }
+    .navlink{ padding-left:0; border-left:none; flex:none; }
+  }
+</style>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <a href="index.html" class="brand" style="text-decoration:none;">
+      <span class="mark">CH</span>
+      <span class="brand-name">&larr; THE UNBUILT REGISTER / PLATFORM BRIEF</span>
+    </a>
+    <button id="theme-toggle" type="button" aria-pressed="false">Dark mode</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <p class="eyebrow"><a href="index.html" style="color:inherit;">&larr; The Unbuilt Register</a> &middot; companion brief #07 &middot; grounded in production Swiss e-government infrastructure</p>
+    <h1 class="display">Six systems can share almost everything about how they run. They can't share the data itself.</h1>
+    <p class="hero-lede">A federated platform &mdash; one identity layer, one interoperability registry, one secure exchange bus, one aggregate reporting layer, sitting under six independently-owned modules &mdash; is realistic. A single merged database is not: Swiss federalism splits ownership across cantons and the Confederation, and the revised Data Protection Act's purpose-limitation rule blocks quietly repurposing data collected for one job onto another.</p>
+  </section>
+
+  <section class="verdict">
+    <div class="verdict-panel">
+      <p class="eyebrow">Verdict</p>
+      <h2 class="verdict-title">Federate the plumbing. Don't merge the data.</h2>
+      <div class="verdict-grid">
+        <div class="verdict-col yes">
+          <div class="col-label">Realistic as one platform</div>
+          <p>Identity &amp; login, an interoperability/schema registry, a secure exchange bus, shared reference registers, monitoring, and an aggregate-only reporting layer. Every one of these already runs in production at national scale &mdash; I14Y, sedex and eIAM/CH-LOGIN &mdash; and is exactly the shared infrastructure the "Digitale Verwaltung Schweiz" 2024&ndash;2027 strategy is pushing every agency toward anyway.</p>
+        </div>
+        <div class="verdict-col no">
+          <div class="col-label">Not realistic as one platform</div>
+          <p>A single database or single agency owning all six domains' case-level data. No legal entity has that authority &mdash; housing permits, elderly care and heat outreach are cantonal/municipal matters, energy grids answer to distribution operators and ElCom, transit answers to the federal government and SBB. Art. 6 nDSG separately bars processing personal data for a purpose incompatible with why it was collected.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="layout">
+    <aside class="rail">
+      <div class="rail-title">Contents</div>
+      <nav>
+        <a class="navlink" href="#architecture">Architecture</a>
+        <a class="navlink" href="#substrate">Shared substrate</a>
+        <a class="navlink" href="#modules">Module roles</a>
+        <a class="navlink" href="#dataflow">Data flow</a>
+        <a class="navlink" href="#matrix">Constraints matrix</a>
+        <a class="navlink" href="#rollout">Build order</a>
+      </nav>
+    </aside>
+
+    <main>
+      <section class="block" id="architecture">
+        <h2>The layered architecture</h2>
+        <p class="block-gap">Citizens and planners meet one front door. Underneath it, six modules sit on a shared substrate &mdash; but only aggregated, purpose-bound extracts flow up into the reporting layer that Module 06 reads from. Color marks how far each module's data is allowed to travel.</p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll">
+            <svg viewBox="0 0 920 468" role="img" aria-label="Layered architecture: a shared front door sits above five modules, which connect through defined APIs to a shared administrative substrate (identity, interoperability registry, exchange bus, reference registers, monitoring), which passes only aggregated extracts down into an analytics warehouse, which Module 06 reads from as a planner-facing dashboard.">
+              <defs>
+                <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+                </marker>
+              </defs>
+
+              <!-- Front door -->
+              <rect x="40" y="22" width="840" height="52" rx="7" fill="none" stroke="currentColor" stroke-width="1.4"/>
+              <text x="460" y="44" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12.5" font-weight="600" fill="currentColor">SHARED ONE-STOP PORTAL</text>
+              <text x="460" y="61" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="currentColor" opacity="0.65">citizen + planner front door</text>
+
+              <!-- Modules row label -->
+              <text x="40" y="102" font-family="IBM Plex Mono, monospace" font-size="10.5" letter-spacing="1" fill="currentColor" opacity="0.6">MODULES</text>
+
+              <!-- Module boxes: 01 teal,02 plum,03 plum,04 amber,05 teal -->
+              <g font-family="IBM Plex Mono, monospace">
+                <!-- 01 -->
+                <rect x="40" y="110" width="154" height="66" rx="6" fill="var(--teal-soft)" stroke="var(--teal)" stroke-width="1.4"/>
+                <text x="117" y="134" text-anchor="middle" font-size="12" font-weight="600" fill="var(--teal)">01 · PERMITS</text>
+                <text x="117" y="150" text-anchor="middle" font-size="10" fill="var(--teal)" opacity="0.85">shared / federated</text>
+                <text x="117" y="164" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.6">per-canton instance</text>
+
+                <!-- 02 -->
+                <rect x="211" y="110" width="154" height="66" rx="6" fill="var(--plum-soft)" stroke="var(--plum)" stroke-width="1.4"/>
+                <text x="288" y="134" text-anchor="middle" font-size="12" font-weight="600" fill="var(--plum)">02 · NURSING</text>
+                <text x="288" y="150" text-anchor="middle" font-size="10" fill="var(--plum)" opacity="0.85">isolated</text>
+                <text x="288" y="164" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.6">health-adjacent</text>
+
+                <!-- 03 -->
+                <rect x="382" y="110" width="154" height="66" rx="6" fill="var(--plum-soft)" stroke="var(--plum)" stroke-width="1.4"/>
+                <text x="459" y="134" text-anchor="middle" font-size="12" font-weight="600" fill="var(--plum)">03 · GRID SIGNAL</text>
+                <text x="459" y="150" text-anchor="middle" font-size="10" fill="var(--plum)" opacity="0.85">isolated</text>
+                <text x="459" y="164" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.6">critical-infra security</text>
+
+                <!-- 04 -->
+                <rect x="553" y="110" width="154" height="66" rx="6" fill="var(--amber-soft)" stroke="var(--amber)" stroke-width="1.4"/>
+                <text x="630" y="134" text-anchor="middle" font-size="12" font-weight="600" fill="var(--amber)">04 · HEAT WARN.</text>
+                <text x="630" y="150" text-anchor="middle" font-size="10" fill="var(--amber)" opacity="0.85">aggregate-only</text>
+                <text x="630" y="164" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.6">list stays isolated</text>
+
+                <!-- 05 -->
+                <rect x="724" y="110" width="154" height="66" rx="6" fill="var(--teal-soft)" stroke="var(--teal)" stroke-width="1.4"/>
+                <text x="801" y="134" text-anchor="middle" font-size="12" font-weight="600" fill="var(--teal)">05 · TRANSIT</text>
+                <text x="801" y="150" text-anchor="middle" font-size="10" fill="var(--teal)" opacity="0.85">shared / federated</text>
+                <text x="801" y="164" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.6">lightweight opt-in ID</text>
+              </g>
+
+              <!-- connector modules -> substrate -->
+              <line x1="40" y1="196" x2="878" y2="196" stroke="currentColor" stroke-width="1" stroke-dasharray="3 4" opacity="0.5"/>
+              <line x1="459" y1="196" x2="459" y2="216" stroke="currentColor" stroke-width="1.4" marker-end="url(#arrow)"/>
+              <text x="472" y="209" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="currentColor" opacity="0.75">via module-owned APIs, catalogued in the interoperability registry</text>
+
+              <!-- Substrate label -->
+              <text x="40" y="234" font-family="IBM Plex Mono, monospace" font-size="10.5" letter-spacing="1" fill="currentColor" opacity="0.6">SHARED ADMINISTRATIVE SUBSTRATE</text>
+
+              <!-- Substrate boxes (neutral) -->
+              <g font-family="IBM Plex Mono, monospace">
+                <rect x="40" y="242" width="154" height="64" rx="6" fill="var(--paper-raised)" stroke="currentColor" stroke-width="1.1" opacity="0.9"/>
+                <text x="117" y="266" text-anchor="middle" font-size="11" font-weight="600" fill="currentColor">IDENTITY &amp; ACCESS</text>
+                <text x="117" y="281" text-anchor="middle" font-size="9.5" fill="var(--red)">eIAM / CH-LOGIN pattern</text>
+
+                <rect x="211" y="242" width="154" height="64" rx="6" fill="var(--paper-raised)" stroke="currentColor" stroke-width="1.1" opacity="0.9"/>
+                <text x="288" y="260" text-anchor="middle" font-size="11" font-weight="600" fill="currentColor">INTEROPERABILITY</text>
+                <text x="288" y="273" text-anchor="middle" font-size="11" font-weight="600" fill="currentColor">REGISTRY</text>
+                <text x="288" y="288" text-anchor="middle" font-size="9.5" fill="var(--red)">I14Y pattern</text>
+
+                <rect x="382" y="242" width="154" height="64" rx="6" fill="var(--paper-raised)" stroke="currentColor" stroke-width="1.1" opacity="0.9"/>
+                <text x="459" y="266" text-anchor="middle" font-size="11" font-weight="600" fill="currentColor">EXCHANGE BUS</text>
+                <text x="459" y="281" text-anchor="middle" font-size="9.5" fill="var(--red)">sedex pattern</text>
+
+                <rect x="553" y="242" width="154" height="64" rx="6" fill="var(--paper-raised)" stroke="currentColor" stroke-width="1.1" opacity="0.9"/>
+                <text x="630" y="260" text-anchor="middle" font-size="11" font-weight="600" fill="currentColor">REFERENCE</text>
+                <text x="630" y="273" text-anchor="middle" font-size="11" font-weight="600" fill="currentColor">REGISTERS</text>
+                <text x="630" y="288" text-anchor="middle" font-size="9.5" fill="var(--red)">GWR &middot; STATPOP &middot; cadastral</text>
+
+                <rect x="724" y="242" width="154" height="64" rx="6" fill="var(--paper-raised)" stroke="currentColor" stroke-width="1.1" opacity="0.9"/>
+                <text x="801" y="266" text-anchor="middle" font-size="11" font-weight="600" fill="currentColor">MONITORING</text>
+                <text x="801" y="279" text-anchor="middle" font-size="11" font-weight="600" fill="currentColor">&amp; AUDIT</text>
+                <text x="801" y="294" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.6">uptime &middot; logs &middot; SLAs</text>
+              </g>
+
+              <!-- connector substrate -> warehouse -->
+              <line x1="459" y1="306" x2="459" y2="332" stroke="currentColor" stroke-width="1.4" marker-end="url(#arrow)"/>
+              <text x="472" y="323" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="currentColor" opacity="0.75">aggregated, purpose-bound extracts only</text>
+
+              <!-- Warehouse -->
+              <rect x="40" y="336" width="838" height="50" rx="7" fill="var(--teal-soft)" stroke="var(--teal)" stroke-width="1.4"/>
+              <text x="459" y="358" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12.5" font-weight="600" fill="var(--teal)">AGGREGATE ANALYTICS WAREHOUSE</text>
+              <text x="459" y="374" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="var(--teal)" opacity="0.85">de-identified extracts only &mdash; never raw case data</text>
+
+              <!-- connector warehouse -> 06 -->
+              <line x1="459" y1="386" x2="459" y2="408" stroke="currentColor" stroke-width="1.4" marker-end="url(#arrow)"/>
+
+              <!-- 06 -->
+              <rect x="279" y="410" width="360" height="50" rx="7" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="5 3"/>
+              <text x="459" y="431" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="600" fill="currentColor">06 &middot; MUNICIPAL COORDINATION LAYER</text>
+              <text x="459" y="447" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10.5" fill="currentColor" opacity="0.65">reads the warehouse &mdash; owns no data of its own</text>
+            </svg>
+          </div>
+          <figcaption><b>Fig. 1</b> &mdash; the shared substrate (identity, interoperability registry, exchange bus, reference registers, monitoring) is the only thing all six modules touch directly. Module 06 isn't a seventh data source: it's the platform's own dashboard, built entirely on what the other five already published upward.</figcaption>
+        </figure>
+
+        <div class="legend">
+          <span class="sw"><span class="dot" style="background:var(--teal)"></span>Shared / federatable</span>
+          <span class="sw"><span class="dot" style="background:var(--amber)"></span>Aggregate-only</span>
+          <span class="sw"><span class="dot" style="background:var(--plum)"></span>Isolated</span>
+        </div>
+      </section>
+
+      <section class="block" id="substrate">
+        <h2>The shared substrate, one service at a time</h2>
+        <p class="block-gap">None of this is hypothetical infrastructure. Each service below is modeled directly on a system already running Swiss government data exchange today.</p>
+
+        <div class="svc-grid">
+          <div class="svc">
+            <h3>Identity &amp; Access</h3>
+            <p class="modeled">modeled on eIAM / CH-LOGIN</p>
+            <p class="desc">One login for citizens across all six front ends; role-scoped access for agency staff. The federal eIAM service already does exactly this for federal e-government apps, with "bring your own identity" support for cantonal and external providers.</p>
+          </div>
+          <div class="svc">
+            <h3>Interoperability Registry</h3>
+            <p class="modeled">modeled on I14Y</p>
+            <p class="desc">A shared catalog of data, APIs and semantics so cantonal permit schemas, GWR fields and SBB occupancy formats mean the same thing platform-wide. Isolated modules publish their schema here too &mdash; never the data itself.</p>
+          </div>
+          <div class="svc">
+            <h3>Secure Exchange Bus</h3>
+            <p class="modeled">modeled on sedex</p>
+            <p class="desc">Encrypted, audited, non-repudiated file transport already used by 8,000+ Swiss public-sector units across 80 domains. Carries aggregated extracts to the warehouse and specific encrypted handoffs &mdash; never a shared data lake.</p>
+          </div>
+          <div class="svc">
+            <h3>Reference Registers</h3>
+            <p class="modeled">GWR &middot; STATPOP &middot; cadastral survey</p>
+            <p class="desc">Already-public, already-shared base data &mdash; buildings, population cohorts, parcels, municipality boundaries. Low sensitivity, reused directly by any module that needs geographic or demographic grounding.</p>
+          </div>
+          <div class="svc">
+            <h3>Monitoring &amp; Audit</h3>
+            <p class="modeled">operational, not data-sensitive</p>
+            <p class="desc">Uptime, incident response, SLA dashboards and access logs. Common infrastructure regardless of a module's sensitivity tier &mdash; it's metadata about the system, not the personal data flowing through it.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="block" id="modules">
+        <h2>Each system's role in the platform</h2>
+        <p class="block-gap">Same six numbers as the register. What changes is what each one is allowed to publish upward.</p>
+
+        <div class="tbl-scroll">
+          <table class="brief">
+            <thead><tr><th>#</th><th>Role in the platform</th><th>Sharing tier</th><th>Contributes upward</th><th>Data owner</th></tr></thead>
+            <tbody>
+              <tr><td>01 Permit Tracker</td><td>Federated data producer</td><td><span class="tier shared">Shared</span></td><td>Aggregate stall-index, by municipality</td><td>Cantons &mdash; one instance each</td></tr>
+              <tr><td>02 Nursing Matching</td><td>Isolated specialist system</td><td><span class="tier isolated">Isolated</span></td><td>Aggregate capacity-vs-demand index only</td><td>Cantonal health authorities</td></tr>
+              <tr><td>03 Grid Signal</td><td>Isolated specialist system</td><td><span class="tier isolated">Isolated</span></td><td>Delayed, aggregated flexibility signal only</td><td>Distribution grid operators + cantonal energy offices</td></tr>
+              <tr><td>04 Heat Warning</td><td>Split: isolated list + shared score</td><td><span class="tier partial">Aggregate-only</span></td><td>Aggregate heat-exposure score</td><td>Municipal health services</td></tr>
+              <tr><td>05 Transit Advisor</td><td>Federated, consumer-facing</td><td><span class="tier shared">Shared</span></td><td>Aggregate ridership-shift metrics</td><td>FOT / SBB + opt-in commuter accounts</td></tr>
+              <tr><td>06 Coordination Layer</td><td>Platform's own dashboard</td><td><span class="tier na">N/A &mdash; consumer</span></td><td>&mdash; (reads only)</td><td>Municipal planning offices</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="block" id="dataflow">
+        <h2>What actually crosses the boundary</h2>
+        <p class="block-gap">Art. 6 nDSG's purpose-limitation rule is the real constraint on this platform, so it's worth drawing literally: for three representative modules, what's allowed to leave, what isn't, and where it goes instead.</p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll">
+            <svg viewBox="0 0 900 470" role="img" aria-label="Data flow for three modules. Module 01 pulls reference registers and sends an aggregate stall-index to the warehouse. Module 02's raw workforce data never leaves the module, blocked, while only an aggregate capacity index reaches the warehouse. Module 04 sends its named outreach list only via an encrypted direct handoff to municipal health staff, bypassing the warehouse entirely, while a separate aggregate exposure score does reach the warehouse.">
+              <defs>
+                <marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+                </marker>
+              </defs>
+
+              <!-- Lane 01 -->
+              <rect x="30" y="24" width="260" height="58" rx="6" fill="var(--teal-soft)" stroke="var(--teal)" stroke-width="1.3"/>
+              <text x="160" y="48" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11.5" font-weight="600" fill="var(--teal)">01 &middot; PERMIT STORE</text>
+              <text x="160" y="64" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="var(--teal)" opacity="0.85">raw permit cases (cantonal)</text>
+
+              <rect x="650" y="24" width="220" height="46" rx="6" fill="none" stroke="currentColor" stroke-width="1.1" opacity="0.85"/>
+              <text x="760" y="44" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="600" fill="currentColor">GWR / STATPOP</text>
+              <text x="760" y="59" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9.5" fill="currentColor" opacity="0.6">reference registers</text>
+              <line x1="650" y1="52" x2="292" y2="52" stroke="currentColor" stroke-width="1.2" marker-end="url(#arrow2)" opacity="0.8"/>
+              <text x="470" y="45" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="currentColor" opacity="0.7">read-only pull, daily/annual</text>
+
+              <line x1="160" y1="82" x2="160" y2="130" stroke="var(--teal)" stroke-width="1.4" marker-end="url(#arrow2)"/>
+              <text x="176" y="110" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--teal)">aggregate stall-index, nightly, via exchange bus</text>
+
+              <!-- Lane 02 -->
+              <rect x="30" y="160" width="320" height="58" rx="6" fill="var(--plum-soft)" stroke="var(--plum)" stroke-width="1.3"/>
+              <text x="190" y="184" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11.5" font-weight="600" fill="var(--plum)">02 &middot; NURSING STORE</text>
+              <text x="190" y="200" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="var(--plum)" opacity="0.85">workforce + care-demand data</text>
+
+              <line x1="190" y1="218" x2="190" y2="260" stroke="var(--plum)" stroke-width="1.3" stroke-dasharray="4 4" opacity="0.85"/>
+              <text x="204" y="240" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--plum)">✕ raw case data &mdash; never leaves the module</text>
+
+              <line x1="330" y1="218" x2="410" y2="266" stroke="var(--plum)" stroke-width="1.4" marker-end="url(#arrow2)"/>
+              <text x="336" y="246" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--plum)">aggregate capacity index only</text>
+
+              <!-- Lane 04 -->
+              <rect x="30" y="300" width="300" height="58" rx="6" fill="var(--amber-soft)" stroke="var(--amber)" stroke-width="1.3"/>
+              <text x="180" y="324" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11.5" font-weight="600" fill="var(--amber)">04 &middot; HEAT-WARNING STORE</text>
+              <text x="180" y="340" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="var(--amber)" opacity="0.85">named, addressed outreach list</text>
+
+              <rect x="560" y="300" width="310" height="58" rx="6" fill="none" stroke="currentColor" stroke-width="1.1" opacity="0.85"/>
+              <text x="715" y="324" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="600" fill="currentColor">MUNICIPAL HEALTH STAFF</text>
+              <text x="715" y="340" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9.5" fill="currentColor" opacity="0.65">direct, access-controlled &mdash; not the warehouse</text>
+
+              <line x1="330" y1="322" x2="556" y2="322" stroke="var(--amber)" stroke-width="1.4" marker-end="url(#arrow2)"/>
+              <text x="443" y="315" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--amber)">encrypted handoff, via exchange bus</text>
+
+              <line x1="180" y1="358" x2="440" y2="400" stroke="var(--amber)" stroke-width="1.4" marker-end="url(#arrow2)"/>
+              <text x="192" y="386" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--amber)">aggregate heat-exposure score only</text>
+
+              <!-- shared warehouse -->
+              <rect x="30" y="408" width="840" height="48" rx="7" fill="var(--teal-soft)" stroke="var(--teal)" stroke-width="1.4"/>
+              <text x="450" y="428" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="600" fill="var(--teal)">ANALYTICS WAREHOUSE</text>
+              <text x="450" y="444" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10.5" fill="var(--teal)" opacity="0.85">aggregated only &mdash; every arrow that reaches here has already had identifying detail removed</text>
+            </svg>
+          </div>
+          <figcaption><b>Fig. 2</b> &mdash; reference data flows freely down into modules; only aggregates flow up into the warehouse. Module 02's raw records never make the trip at all, and Module 04's sensitive list goes point-to-point to the people with a legal reason to see it, not into shared reporting.</figcaption>
+        </figure>
+      </section>
+
+      <section class="block" id="matrix">
+        <h2>What's shared vs. what stays independent</h2>
+        <p class="block-gap">Function by function, not module by module &mdash; because the split runs through the platform's layers, not around any single system.</p>
+
+        <div class="tbl-scroll">
+          <table class="brief">
+            <thead><tr><th>Function</th><th>Shared platform-wide?</th><th>Why</th></tr></thead>
+            <tbody>
+              <tr><td>Identity &amp; login</td><td><span class="tier shared">Yes</span></td><td>Federated: one citizen login, role-scoped agency access</td></tr>
+              <tr><td>Interoperability registry</td><td><span class="tier shared">Yes</span></td><td>Even isolated modules publish their schema &mdash; never the data</td></tr>
+              <tr><td>Secure exchange (transport)</td><td><span class="tier shared">Yes</span></td><td>Carries aggregates and specific encrypted handoffs only, never a data lake</td></tr>
+              <tr><td>Reference registers</td><td><span class="tier shared">Yes</span></td><td>GWR / STATPOP / cadastral are already public and low-sensitivity</td></tr>
+              <tr><td>Monitoring, audit, incident response</td><td><span class="tier shared">Yes</span></td><td>Operational metadata, not personal data</td></tr>
+              <tr><td>Aggregate analytics &amp; reporting</td><td><span class="tier partial">Aggregate-only</span></td><td>Each module controls what's aggregated upward; raw data never lands here</td></tr>
+              <tr><td>Raw case-level data (any module)</td><td><span class="tier isolated">No</span></td><td>Stays inside the module that collected it, under its own legal basis</td></tr>
+              <tr><td>Nursing / workforce case records</td><td><span class="tier isolated">No</span></td><td>Health-adjacent, high regulatory constraint, cantonal health law</td></tr>
+              <tr><td>Grid meter &amp; topology data</td><td><span class="tier isolated">No</span></td><td>Critical-infrastructure security segregation</td></tr>
+              <tr><td>Heat-outreach named list</td><td><span class="tier isolated">No</span></td><td>Identifies vulnerable individuals; municipal health custody only</td></tr>
+              <tr><td>Hosting / network</td><td><span class="tier partial">Partially</span></td><td>Shared cloud fine for 01/04/05/06; 03 needs a segregated network zone</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="block" id="rollout">
+        <h2>A realistic build order</h2>
+        <p class="block-gap">The register already flagged 01 and 05 as the two systems buildable now &mdash; they're also the two lowest-sensitivity, most federatable modules. That makes them the natural pilot for the shared substrate, not a reason to build the whole platform at once.</p>
+
+        <div class="rollout-strip">
+          <div class="rollout-step"><span class="n mono">STEP 1</span><p>Stand up identity, interoperability registry and exchange bus alongside 01 and 05 only. Prove the pattern on the two modules with nothing to isolate.</p></div>
+          <div class="rollout-step"><span class="n mono">STEP 2</span><p>Wire the aggregate analytics warehouse to 01 and 05's outputs. Build Module 06's dashboard against real aggregate data for the first time.</p></div>
+          <div class="rollout-step"><span class="n mono">STEP 3</span><p>Extend the substrate to 04, adding the point-to-point encrypted handoff pattern for its named list before any aggregate reporting is enabled.</p></div>
+          <div class="rollout-step"><span class="n mono">STEP 4</span><p>Bring 02 and 03 in last, each on its own governance track &mdash; cantonal health law for 02, critical-infrastructure security review for 03.</p></div>
+        </div>
+
+        <p class="close-callout"><b>Bottom line:</b> yes, this can realistically become one platform &mdash; but "one platform" means one shared substrate, not one database. Built any other way, it either stalls on the legal review for 02 and 03, or ships something that quietly violates purpose limitation the day someone joins two tables that were never meant to be joined.</p>
+      </section>
+    </main>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>Grounded in Swiss federal e-government infrastructure: I14Y (interoperability platform), sedex (secure data exchange, Federal Statistical Office), eIAM/CH-LOGIN (federal identity), Art. 6 of the revised Federal Act on Data Protection (nDSG), and the "Digitale Verwaltung Schweiz" 2024&ndash;2027 strategy. A working analysis, not an official government publication.</p>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var btn = document.getElementById('theme-toggle');
+    var root = document.documentElement;
+    var stored = null;
+    try { stored = localStorage.getItem('theme'); } catch(e) {}
+    if (stored === 'dark' || stored === 'light') {
+      root.setAttribute('data-theme', stored);
+      btn.setAttribute('aria-pressed', String(stored === 'dark'));
+      btn.textContent = stored === 'dark' ? 'Light mode' : 'Dark mode';
+    }
+    btn.addEventListener('click', function(){
+      var current = root.getAttribute('data-theme');
+      var next = current === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      btn.setAttribute('aria-pressed', String(next === 'dark'));
+      btn.textContent = next === 'dark' ? 'Light mode' : 'Dark mode';
+      try { localStorage.setItem('theme', next); } catch(e) {}
+    });
+  })();
+</script>
