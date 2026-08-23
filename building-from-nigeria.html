@@ -1,0 +1,323 @@
+<title>Building From Nigeria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper: #f6f4ef;
+    --paper-raised: #ffffff;
+    --ink: #1b1d1f;
+    --ink-soft: #53575c;
+    --ink-faint: #83878c;
+    --line: #d8d3c9;
+    --red: #c8102e;
+    --red-soft: #fbe9ec;
+    --teal: #1f6f6b;
+    --teal-soft: #e7f2f1;
+    --amber: #8a5a12;
+    --amber-soft: #f5ecd8;
+    --plum: #743a5c;
+    --plum-soft: #f2e4ec;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper: #14161a; --paper-raised: #1b1e23; --ink: #ece9e2; --ink-soft: #b3b6ba; --ink-faint: #797d82;
+      --line: #2b2e33; --red: #e6465e; --red-soft: #3a1a20; --teal: #4fb3ac; --teal-soft: #16302e;
+      --amber: #d0a350; --amber-soft: #3a2f18; --plum: #c583a8; --plum-soft: #33202c;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper: #14161a; --paper-raised: #1b1e23; --ink: #ece9e2; --ink-soft: #b3b6ba; --ink-faint: #797d82;
+    --line: #2b2e33; --red: #e6465e; --red-soft: #3a1a20; --teal: #4fb3ac; --teal-soft: #16302e;
+    --amber: #d0a350; --amber-soft: #3a2f18; --plum: #c583a8; --plum-soft: #33202c;
+  }
+
+  *{ box-sizing:border-box; }
+  @media (prefers-reduced-motion: reduce){ *{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; } }
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size:16px; line-height:1.6;
+  }
+  ::selection{ background:var(--red); color:#fff; }
+  a{ color:var(--red); }
+  a:focus-visible, button:focus-visible{ outline:2px solid var(--red); outline-offset:3px; border-radius:2px; }
+
+  .display{ font-family:"Archivo Expanded", "Arial Narrow", sans-serif; font-weight:800; text-wrap:balance; letter-spacing:-0.01em; }
+  .mono{ font-family:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace; font-variant-numeric:tabular-nums; }
+  .eyebrow{ font-family:"IBM Plex Mono", monospace; font-size:12.5px; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-faint); }
+
+  .wrap{ max-width:840px; margin:0 auto; padding:0 24px; }
+
+  header.masthead{ border-bottom:1px solid var(--line); background:var(--paper); }
+  .masthead-inner{ max-width:840px; margin:0 auto; padding:16px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+  .brand{ display:flex; align-items:baseline; gap:10px; text-decoration:none; }
+  .brand .mark{ display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; background:var(--ink); color:var(--paper); font-family:"IBM Plex Mono", monospace; font-size:12px; font-weight:600; border-radius:3px; }
+  .brand-name{ font-family:"IBM Plex Mono", monospace; font-size:12.5px; letter-spacing:0.02em; color:var(--ink-soft); }
+  #theme-toggle{ font-family:"IBM Plex Mono", monospace; font-size:12px; background:none; border:1px solid var(--line); color:var(--ink-soft); padding:7px 12px; border-radius:20px; cursor:pointer; }
+  #theme-toggle:hover{ border-color:var(--ink-faint); color:var(--ink); }
+
+  .hero{ padding:52px 0 36px; border-bottom:1px solid var(--line); }
+  .hero h1{ font-size:clamp(28px, 5.5vw, 42px); line-height:1.08; margin:14px 0 16px; }
+  .hero p{ max-width:600px; font-size:17px; color:var(--ink-soft); margin:0; }
+
+  section.block{ padding:40px 0; border-bottom:1px solid var(--line); }
+  .block h2{ font-family:"Archivo Expanded", sans-serif; font-weight:700; font-size:clamp(19px,2.6vw,23px); margin:0 0 6px; }
+  .block .block-gap{ color:var(--ink-soft); font-size:15px; max-width:600px; margin:0 0 26px; }
+
+  /* goal chooser */
+  .goal-tabs{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+  .goal-tab{
+    font-family:"IBM Plex Mono", monospace; font-size:12.5px; text-align:left;
+    background:var(--paper-raised); border:1px solid var(--line); color:var(--ink-soft);
+    padding:10px 14px; border-radius:8px; cursor:pointer; line-height:1.4;
+  }
+  .goal-tab:hover{ border-color:var(--ink-faint); color:var(--ink); }
+  .goal-tab[aria-selected="true"]{ border-color:var(--red); color:var(--red); background:var(--red-soft); font-weight:600; }
+
+  .goal-panel{
+    border:1px solid var(--line); border-radius:10px; background:var(--paper-raised);
+    padding:22px 24px; display:none;
+  }
+  .goal-panel.active{ display:block; }
+  .goal-panel .verdict-row{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .goal-panel h3{ font-family:"Archivo Expanded", sans-serif; font-weight:700; font-size:18px; margin:0; }
+  .goal-panel p{ margin:0 0 10px; color:var(--ink-soft); font-size:15px; max-width:560px; }
+  .goal-panel p:last-child{ margin-bottom:0; }
+
+  .badge{ font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:600; padding:4px 10px; border-radius:20px; border:1px solid; white-space:nowrap; }
+  .badge.go{ color:var(--teal); border-color:var(--teal); background:var(--teal-soft); }
+  .badge.caution{ color:var(--amber); border-color:var(--amber); background:var(--amber-soft); }
+  .badge.stop{ color:var(--plum); border-color:var(--plum); background:var(--plum-soft); }
+
+  /* module grid */
+  .mod-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:12px; }
+  .mod-card{ border:1px solid var(--line); border-radius:10px; background:var(--paper-raised); overflow:hidden; }
+  .mod-card > button{
+    all:unset; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; gap:12px;
+    width:100%; padding:14px 16px; cursor:pointer;
+  }
+  .mod-card > button:hover{ background:var(--paper); }
+  .mod-card .mod-name{ font-family:"IBM Plex Mono",monospace; font-size:13px; font-weight:600; color:var(--ink); }
+  .mod-card .chev{ font-family:"IBM Plex Mono",monospace; color:var(--ink-faint); transition:transform 0.15s ease; flex:none; }
+  .mod-card[data-open="true"] .chev{ transform:rotate(45deg); }
+  .mod-detail{ max-height:0; overflow:hidden; transition:max-height 0.18s ease; }
+  .mod-card[data-open="true"] .mod-detail{ max-height:220px; }
+  .mod-detail-inner{ padding:0 16px 16px; }
+  .mod-detail-inner p{ margin:8px 0 0; font-size:13.5px; color:var(--ink-soft); }
+
+  /* GPA toggle */
+  .gpa-toggle{ display:inline-flex; border:1px solid var(--line); border-radius:20px; padding:3px; margin-bottom:20px; }
+  .gpa-toggle button{
+    all:unset; box-sizing:border-box; font-family:"IBM Plex Mono",monospace; font-size:12.5px;
+    padding:8px 16px; border-radius:16px; cursor:pointer; color:var(--ink-soft);
+  }
+  .gpa-toggle button[aria-selected="true"]{ background:var(--ink); color:var(--paper); font-weight:600; }
+  .gpa-result{ border:1px solid var(--line); border-radius:10px; background:var(--paper-raised); padding:20px 22px; }
+  .gpa-result .gpa-headline{ font-family:"Archivo Expanded",sans-serif; font-weight:700; font-size:17px; margin:0 0 8px; }
+  .gpa-result p{ margin:0; color:var(--ink-soft); font-size:14.5px; max-width:560px; }
+
+  .close-note{
+    margin-top:0; padding:16px 18px; border-left:3px solid var(--teal); background:var(--teal-soft);
+    border-radius:0 8px 8px 0; font-size:14.5px; color:var(--ink-soft); max-width:600px;
+  }
+  .close-note b{ color:var(--ink); }
+
+  footer{ padding:28px 0 50px; }
+  footer p{ color:var(--ink-faint); font-size:12.5px; margin:0; max-width:600px; }
+  footer a{ color:var(--ink-soft); }
+</style>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <a href="federation-model.html" class="brand">
+      <span class="mark">CH</span>
+      <span class="brand-name">&larr; THE FEDERATION MODEL</span>
+    </a>
+    <button id="theme-toggle" type="button" aria-pressed="false">Dark mode</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <p class="eyebrow"><a href="index.html" style="color:inherit;">The Unbuilt Register</a> &rarr; <a href="federation-model.html" style="color:inherit;">The Federation Model</a> &rarr; interactive feasibility guide</p>
+    <h1 class="display">Yes, you can build this from Nigeria. Presenting it to the Swiss government is a different problem.</h1>
+    <p>Pick what you're actually trying to do below &mdash; the honest answer changes a lot depending on whether you're building a demo, chasing a contract, or asking for sensitive data access.</p>
+  </section>
+
+  <section class="block">
+    <h2>What are you trying to do?</h2>
+    <p class="block-gap">Click one. The answer underneath is specific to that goal, not a general "it depends."</p>
+
+    <div class="goal-tabs" role="tablist">
+      <button class="goal-tab" role="tab" data-goal="demo" aria-selected="true">Build a working demo</button>
+      <button class="goal-tab" role="tab" data-goal="contract" aria-selected="false">Get paid by a Swiss government body</button>
+      <button class="goal-tab" role="tab" data-goal="data" aria-selected="false">Get access to sensitive data</button>
+      <button class="goal-tab" role="tab" data-goal="platform" aria-selected="false">Build the unified platform</button>
+      <button class="goal-tab" role="tab" data-goal="users" aria-selected="false">Handle real Swiss users' data</button>
+    </div>
+
+    <div class="goal-panel active" data-panel="demo">
+      <div class="verdict-row"><span class="badge go">Fully doable, remotely</span></div>
+      <h3>Build a working demo</h3>
+      <p>The data behind #1 (Permit Tracker) and #5 (Transit Advisor) is genuinely open to anyone &mdash; opentransportdata.swiss's terms don't require registration for file-based data, and GWR's public tier needs no authorization. Nothing about being in Nigeria blocks pulling that data and shipping a working build.</p>
+      <p>That's also why those two, specifically, are the right starting point &mdash; not #2, #3 or #4.</p>
+    </div>
+
+    <div class="goal-panel" data-panel="contract">
+      <div class="verdict-row"><span class="badge stop">Structurally hard, and it's not about the code</span></div>
+      <h3>Get paid by a Swiss government body</h3>
+      <p>Foreign bidders get automatic non-discriminatory rights to above-threshold Swiss public contracts only if their home country signed the WTO Government Procurement Agreement. Nigeria hasn't, and isn't in the current accession queue. Below-threshold cantonal procedures are even more informal and default to known local vendors.</p>
+      <p>A cold "I built this, buy it" pitch to a ministry is a hard sell for structural reasons, not quality ones. A Swiss/EU-incorporated entity or a local partner is what actually opens this door.</p>
+    </div>
+
+    <div class="goal-panel" data-panel="data">
+      <div class="verdict-row"><span class="badge caution">Needs Swiss institutional backing first</span></div>
+      <h3>Get access to sensitive data</h3>
+      <p>Near-real-time GWR data, nursing/workforce records, and grid data all require a demonstrated-purpose authorization request to a Swiss authority. That process is built around institutional legitimacy &mdash; a solo foreign applicant with no Swiss affiliation is unlikely to clear it, especially for grid data, which carries critical-infrastructure security scrutiny on top.</p>
+      <p>This isn't Nigeria-specific &mdash; it would apply to a solo builder anywhere without a Swiss/EU institution behind them.</p>
+    </div>
+
+    <div class="goal-panel" data-panel="platform">
+      <div class="verdict-row"><span class="badge caution">Prototype the pattern &mdash; don't try to operate it</span></div>
+      <h3>Build the unified platform</h3>
+      <p>The shared substrate from the platform brief &mdash; identity, interoperability registry, exchange bus &mdash; isn't really a product. Its whole job is to be the thing multiple government agencies plug into and trust. No government hands that role to an unaffiliated foreign builder, Nigerian or Swiss. That's a sovereignty problem, not a data-access one, and no amount of good engineering fixes it from outside.</p>
+      <p>Most of it also already exists and is federally operated &mdash; sedex, I14Y and eIAM are live today. The realistic ask was never "replace these," it's "plug a module into them," which still only a Swiss-recognized entity can actually do.</p>
+      <p>What's genuinely buildable from Nigeria: a demo of the <em>pattern</em>, not the infrastructure. Build #1 and #5 for real on open data, then build a #6-style dashboard on top that reads only what those two publish. That proves the architecture works without asking anyone to trust you with real identity or exchange infrastructure.</p>
+    </div>
+
+    <div class="goal-panel" data-panel="users">
+      <div class="verdict-row"><span class="badge caution">Legal obligation follows the data, not you</span></div>
+      <h3>Handle real Swiss users' data</h3>
+      <p>The revised Swiss Data Protection Act (nDSG) applies to whoever processes personal data affecting people in Switzerland, regardless of where that processor is physically located. Building on open/aggregate data is fine. Adding real sign-ups for Swiss commuters means you've taken on a compliance obligation &mdash; know that before you add the first account, not after.</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2>Module by module: what's actually buildable</h2>
+    <p class="block-gap">Same six systems, same tier colors as the platform brief. Click any one for the specific reason.</p>
+
+    <div class="mod-grid" id="mod-grid">
+      <div class="mod-card" data-open="false">
+        <button aria-expanded="false"><span class="mod-name">01 &middot; Permit Tracker</span><span class="badge go">Buildable now</span><span class="chev">+</span></button>
+        <div class="mod-detail"><div class="mod-detail-inner"><p>Open cantonal permit data + public GWR tier. No registration, no residency requirement. Start here.</p></div></div>
+      </div>
+      <div class="mod-card" data-open="false">
+        <button aria-expanded="false"><span class="mod-name">05 &middot; Transit Advisor</span><span class="badge go">Buildable now</span><span class="chev">+</span></button>
+        <div class="mod-detail"><div class="mod-detail-inner"><p>opentransportdata.swiss is open to anyone, no registration for file-based data. The second credible starting point.</p></div></div>
+      </div>
+      <div class="mod-card" data-open="false">
+        <button aria-expanded="false"><span class="mod-name">04 &middot; Heat Warning</span><span class="badge caution">Partial &mdash; aggregate only</span><span class="chev">+</span></button>
+        <div class="mod-detail"><div class="mod-detail-inner"><p>The exposure score is buildable on open data. The named outreach list needs municipal health custody &mdash; don't build that part solo.</p></div></div>
+      </div>
+      <div class="mod-card" data-open="false">
+        <button aria-expanded="false"><span class="mod-name">02 &middot; Nursing Matching</span><span class="badge stop">Don't attempt solo</span><span class="chev">+</span></button>
+        <div class="mod-detail"><div class="mod-detail-inner"><p>Health-adjacent workforce data, high regulatory constraint, cantonal health law governs access. Needs a Swiss institutional partner from day one.</p></div></div>
+      </div>
+      <div class="mod-card" data-open="false">
+        <button aria-expanded="false"><span class="mod-name">03 &middot; Grid Signal</span><span class="badge stop">Don't attempt solo</span><span class="chev">+</span></button>
+        <div class="mod-detail"><div class="mod-detail-inner"><p>Critical-infrastructure security segregation. An unaffiliated foreign request for grid data will get scrutinized hard, not granted.</p></div></div>
+      </div>
+      <div class="mod-card" data-open="false">
+        <button aria-expanded="false"><span class="mod-name">06 &middot; Coordination Layer</span><span class="badge caution">Nothing to build alone</span><span class="chev">+</span></button>
+        <div class="mod-detail"><div class="mod-detail-inner"><p>A dashboard that reads aggregate output from 01&ndash;05. There's no independent data source here to go get.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" style="border-bottom:none;">
+    <h2>Why Nigeria specifically changes the contract answer</h2>
+    <p class="block-gap">Procurement rights are reciprocal, not universal. Toggle your country of origin.</p>
+
+    <div class="gpa-toggle" role="tablist">
+      <button role="tab" data-gpa="nigeria" aria-selected="true">Nigeria</button>
+      <button role="tab" data-gpa="member" aria-selected="false">GPA member (EU, US, Japan, UK&hellip;)</button>
+    </div>
+
+    <div class="gpa-result" id="gpa-result">
+      <p class="gpa-headline" id="gpa-headline">No automatic bidding rights above threshold</p>
+      <p id="gpa-body">Switzerland grants non-discriminatory bidding rights on above-threshold public contracts only to companies from countries that reciprocate &mdash; i.e. signed the WTO Government Procurement Agreement. Nigeria hasn't signed it and isn't in the accession queue, so a Nigerian company has no automatic legal right to bid on a large Swiss federal or cantonal contract. It's still possible &mdash; through a Swiss/EU entity, a joint bid with a local partner, or contracts below the threshold &mdash; just not automatic.</p>
+    </div>
+
+    <p class="close-note" style="margin-top:20px;"><b>Bottom line:</b> build the demo, publish it, and take it to the people who publish this data and care about it &mdash; opendata.ch's community, cantonal digital-innovation labs, opentransportdata.swiss &mdash; before you take it to a procurement office. That's the door that's actually open.</p>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>Grounded in WTO Government Procurement Agreement membership rules, the Swiss Federal Act on Public Procurement, and Art. 3 of the revised Federal Act on Data Protection (nDSG). A working analysis, not legal advice.</p>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var btn = document.getElementById('theme-toggle');
+    var root = document.documentElement;
+    var stored = null;
+    try { stored = localStorage.getItem('theme'); } catch(e) {}
+    if (stored === 'dark' || stored === 'light') {
+      root.setAttribute('data-theme', stored);
+      btn.setAttribute('aria-pressed', String(stored === 'dark'));
+      btn.textContent = stored === 'dark' ? 'Light mode' : 'Dark mode';
+    }
+    btn.addEventListener('click', function(){
+      var current = root.getAttribute('data-theme');
+      var next = current === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      btn.setAttribute('aria-pressed', String(next === 'dark'));
+      btn.textContent = next === 'dark' ? 'Light mode' : 'Dark mode';
+      try { localStorage.setItem('theme', next); } catch(e) {}
+    });
+  })();
+
+  (function(){
+    var tabs = document.querySelectorAll('.goal-tab');
+    var panels = document.querySelectorAll('.goal-panel');
+    tabs.forEach(function(tab){
+      tab.addEventListener('click', function(){
+        tabs.forEach(function(t){ t.setAttribute('aria-selected','false'); });
+        tab.setAttribute('aria-selected','true');
+        var goal = tab.getAttribute('data-goal');
+        panels.forEach(function(p){ p.classList.toggle('active', p.getAttribute('data-panel') === goal); });
+      });
+    });
+  })();
+
+  (function(){
+    document.querySelectorAll('.mod-card').forEach(function(card){
+      var btn = card.querySelector('button');
+      btn.addEventListener('click', function(){
+        var open = card.getAttribute('data-open') === 'true';
+        card.setAttribute('data-open', String(!open));
+        btn.setAttribute('aria-expanded', String(!open));
+      });
+    });
+  })();
+
+  (function(){
+    var buttons = document.querySelectorAll('.gpa-toggle button');
+    var headline = document.getElementById('gpa-headline');
+    var body = document.getElementById('gpa-body');
+    var copy = {
+      nigeria: {
+        headline: 'No automatic bidding rights above threshold',
+        body: 'Switzerland grants non-discriminatory bidding rights on above-threshold public contracts only to companies from countries that reciprocate — i.e. signed the WTO Government Procurement Agreement. Nigeria hasn\'t signed it and isn\'t in the accession queue, so a Nigerian company has no automatic legal right to bid on a large Swiss federal or cantonal contract. It\'s still possible — through a Swiss/EU entity, a joint bid with a local partner, or contracts below the threshold — just not automatic.'
+      },
+      member: {
+        headline: 'Automatic non-discriminatory bidding rights above threshold',
+        body: 'GPA signatories (the EU and its member states, the US, UK, Japan, Canada, Switzerland itself and others) get treated the same as Swiss companies on public contracts above the GPA threshold, by treaty. That reciprocity is the entire mechanism — Switzerland opens its market to your country because your country opens its market to Swiss firms in return.'
+      }
+    };
+    buttons.forEach(function(b){
+      b.addEventListener('click', function(){
+        buttons.forEach(function(x){ x.setAttribute('aria-selected','false'); });
+        b.setAttribute('aria-selected','true');
+        var c = copy[b.getAttribute('data-gpa')];
+        headline.textContent = c.headline;
+        body.textContent = c.body;
+      });
+    });
+  })();
+</script>
